@@ -1,26 +1,54 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-archivo-black), ui-sans-serif, system-ui;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular;
+  
+  --color-brand-neon: #00FF00;
+  --color-brand-safety: #FF4D00;
+  --color-bg-dark: #000000;
+  --color-fg-light: #FFFFFF;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg-dark);
+  color: var(--color-fg-light);
+  /* The "broken grid" aesthetic with solid black background */
+}
+
+/* Brutalist specific utilities */
+.brutalist-border {
+  border: 1px solid var(--color-fg-light);
+}
+
+.brutalist-button {
+  border: 2px solid var(--color-brand-neon);
+  background-color: transparent;
+  color: var(--color-brand-neon);
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.1s ease-in-out;
+}
+
+.brutalist-button:hover {
+  background-color: var(--color-brand-neon);
+  color: var(--color-bg-dark);
+}
+
+.brutalist-button-safety {
+  border: 2px solid var(--color-brand-safety);
+  background-color: transparent;
+  color: var(--color-brand-safety);
+}
+
+.brutalist-button-safety:hover {
+  background-color: var(--color-brand-safety);
+  color: var(--color-bg-dark);
+}
+
+/* Remove all border radius everywhere globally for this style */
+* {
+  border-radius: 0 !important;
 }
