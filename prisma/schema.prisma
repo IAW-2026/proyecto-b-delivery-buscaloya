@@ -1,0 +1,133 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DeliveryStatus {
+  ACCEPTED_FOR_ASSIGNMENT
+  COURIER_ASSIGNED
+  PICKED_UP
+  OUT_FOR_DELIVERY
+  DELIVERED
+  DELIVERY_FAILED
+  CANCELLED_SUCCESSFULLY
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  ASSIGNED
+  OFFLINE
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  REASSIGNED
+  REJECTED
+  CANCELLED
+}
+
+enum EventSource {
+  PAYMENTS
+  DELIVERY
+  BUYER
+  SELLER
+  SYSTEM
+}
+
+enum TrackingSource {
+  COURIER_APP
+  SYSTEM
+}
+
+model Courier {
+  id            String               @id @default(uuid())
+  name          String
+  phone         String
+  vehicle_type  String
+  license_plate String?
+  status        AvailabilityStatus   @default(OFFLINE)
+  clerk_id      String?              // El ID de usuario de Clerk propietario/operador
+  last_x        Int?                 @default(5000)
+  last_y        Int?                 @default(5000)
+  created_at    DateTime             @default(now())
+  updated_at    DateTime             @updatedAt
+  assignments   DeliveryAssignment[]
+}
+
+model Delivery {
+  id              String                    @id @default(uuid())
+  order_id        String                    @unique
+  status          DeliveryStatus            @default(ACCEPTED_FOR_ASSIGNMENT)
+  color_code      String?                   @default("#FF007F")
+  created_at      DateTime                  @default(now())
+  updated_at      DateTime                  @updatedAt
+  snapshot        DeliveryContextSnapshot?
+  assignments     DeliveryAssignment[]
+  events          DeliveryStatusEvent[]
+  tracking_points DeliveryTrackingPoint[]
+}
+
+model DeliveryContextSnapshot {
+  id             String   @id @default(uuid())
+  delivery_id    String   @unique
+  delivery       Delivery @relation(fields: [delivery_id], references: [id], onDelete: Cascade)
+  seller_id      String
+  seller_name    String
+  seller_address String
+  seller_x       Int      @default(5000)
+  seller_y       Int      @default(5000)
+  buyer_id       String
+  buyer_name     String
+  buyer_phone    String
+  buyer_address  String
+  buyer_x        Int      @default(5000)
+  buyer_y        Int      @default(5000)
+  created_at     DateTime @default(now())
+}
+
+model DeliveryAssignment {
+  id          String           @id @default(uuid())
+  delivery_id String
+  delivery    Delivery         @relation(fields: [delivery_id], references: [id], onDelete: Cascade)
+  courier_id  String
+  courier     Courier          @relation(fields: [courier_id], references: [id])
+  status      AssignmentStatus @default(ASSIGNED)
+  assigned_at DateTime         @default(now())
+  resolved_at DateTime?
+}
+
+model DeliveryStatusEvent {
+  id          String         @id @default(uuid())
+  delivery_id String
+  delivery    Delivery       @relation(fields: [delivery_id], references: [id], onDelete: Cascade)
+  status      DeliveryStatus
+  source      EventSource
+  reason      String?
+  created_at  DateTime       @default(now())
+}
+
+model DeliveryTrackingPoint {
+  id          String         @id @default(uuid())
+  delivery_id String
+  delivery    Delivery       @relation(fields: [delivery_id], references: [id], onDelete: Cascade)
+  lat         Float
+  lon         Float
+  source      TrackingSource
+  timestamp   DateTime       @default(now())
+}
+
+model TravelerLog {
+  id               String   @id @default(uuid())
+  direction        String
+  endpoint         String
+  method           String
+  request_payload  Json?
+  response_payload Json?
+  status_code      Int
+  created_at       DateTime @default(now())
+}
+
