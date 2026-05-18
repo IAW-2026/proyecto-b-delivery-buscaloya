@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { SearchBar } from '@/components/SearchBar';
 import { Pagination } from '@/components/Pagination';
 import { StatusBadge } from '@/components/StatusBadge';
-import { Courier } from '@prisma/client';
 
 export default async function CouriersPage({
   searchParams,
@@ -56,7 +55,7 @@ export default async function CouriersPage({
             </tr>
           </thead>
           <tbody className="font-mono text-sm">
-            {couriers.map((c: Courier) => (
+            {couriers.map((c: any) => (
               <tr key={c.id} className="border-b border-gray-800 hover:bg-gray-900 transition-colors duration-75 group">
                 <td className="p-4 text-white font-bold">
                   <Link href={`/admin/couriers/${c.id}`} className="hover:text-brand-neon flex items-center gap-2">
