@@ -17,6 +17,16 @@ export default async function AdminPage({
   const search = params?.search || '';
   const limit = 5;
 
+  async function handleFixMissing() {
+    'use server';
+    await fixMissingCoordinates();
+  }
+
+  async function handleFixMissions() {
+    'use server';
+    await fixMissionCoordinates();
+  }
+
   const whereClause = search ? { order_id: { contains: search, mode: 'insensitive' as any } } : {};
 
   const total = await prisma.delivery.count({ where: whereClause });
@@ -51,12 +61,12 @@ export default async function AdminPage({
         <h3 className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.3em] mb-4">Mantenimiento de Red</h3>
         <div className="flex flex-wrap gap-4">
           <TriggerButton />
-          <form action={fixMissingCoordinates}>
+          <form action={handleFixMissing}>
             <button type="submit" className="bg-transparent border border-zinc-800 text-zinc-500 px-4 py-2 text-[10px] hover:border-white hover:text-white transition-all font-mono uppercase">
               [ Recalibrate_Drones ]
             </button>
           </form>
-          <form action={fixMissionCoordinates}>
+          <form action={handleFixMissions}>
             <button type="submit" className="bg-transparent border border-zinc-800 text-zinc-500 px-4 py-2 text-[10px] hover:border-white hover:text-white transition-all font-mono uppercase">
               [ Recalibrate_Missions ]
             </button>

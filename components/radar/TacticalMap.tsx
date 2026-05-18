@@ -124,7 +124,7 @@ export function TacticalMap({
         
         <TransformWrapper
           initialScale={1}
-          minScale={1}
+          minScale={0.4}
           maxScale={10}
           centerOnInit={true}
           limitToBounds={true}
@@ -133,13 +133,13 @@ export function TacticalMap({
             disabled: false,
           }}
         >
-          <TransformComponent wrapperClass="!w-full !h-full" contentClass="!w-full !h-full">
-            <div className="relative w-full h-full min-w-[1000px] min-h-[800px]">
+          <TransformComponent wrapperClass="!w-full !h-full" contentClass="!w-full !h-full flex items-center justify-center">
+            <div className="relative w-[1000px] h-[800px] min-w-[1000px] min-h-[800px] max-w-[1000px] max-h-[800px] flex-shrink-0">
               {/* Fondo del Mapa */}
               <div className="absolute inset-0 z-0 opacity-40 grayscale"
                 style={{
                   backgroundImage: "url('/mapa-bblanca.png')",
-                  backgroundSize: 'cover',
+                  backgroundSize: '100% 100%',
                   backgroundPosition: 'center',
                 }}>
               </div>
