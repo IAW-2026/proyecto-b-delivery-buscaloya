@@ -10,6 +10,7 @@
 import { prisma } from '@/lib/prisma';
 import { fakerES as faker } from '@faker-js/faker';
 import { revalidatePath } from 'next/cache';
+import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
 
 export async function triggerMockOrder() {
   try {
@@ -34,10 +35,14 @@ export async function triggerMockOrder() {
     
     const buyerAddress = `${faker.helpers.arrayElement(calles)} ${faker.number.int({ min: 10, max: 3500 })}`;
 
+    // Generar Código OTP de Confirmación aleatorio de 4 dígitos
+    const confirmationCode = Math.floor(1000 + Math.random() * 9000).toString();
+
     const delivery = await prisma.delivery.create({
       data: {
         order_id: orderId,
         status: 'ACCEPTED_FOR_ASSIGNMENT',
+        confirmation_code: confirmationCode,
         snapshot: {
           create: {
             buyer_id: `BUY-${faker.string.alphanumeric(6).toUpperCase()}`,
@@ -55,6 +60,9 @@ export async function triggerMockOrder() {
         }
       }
     });
+
+    // Simular el envío del código OTP a la Buyer App
+    await mockSendConfirmationCodeToBuyer(orderId, confirmationCode);
 
     revalidatePath('/admin');
     revalidatePath('/dashboard');

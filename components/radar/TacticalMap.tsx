@@ -12,6 +12,7 @@
 import { useState, useEffect } from 'react';
 import { assignCourier, updateDeliveryStatus } from './actions';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import mapaBblanca from '@/app/mapa-bblanca.png';
 
 export function TacticalMap({ 
   initialCouriers, 
@@ -97,14 +98,32 @@ export function TacticalMap({
   };
 
   const handleStatusChange = async (deliveryId: string, newStatus: any) => {
+    let enteredCode: string | null = null;
+    if (newStatus === 'DELIVERED') {
+      enteredCode = prompt("INGRESE CÓDIGO DE CONFIRMACIÓN DEL CLIENTE (OTP):");
+      if (enteredCode === null) {
+        return; // Operator cancelled prompt
+      }
+      if (enteredCode.trim() === '') {
+        alert("CÓDIGO DE CONFIRMACIÓN REQUERIDO");
+        return;
+      }
+    }
+
     setIsProcessing(true);
     
     // Buscar la misión para obtener coordenadas de destino
     const mission = activeMissions.find(m => m.id === deliveryId);
 
-    const res = await updateDeliveryStatus(deliveryId, newStatus);
+    const res = await updateDeliveryStatus(deliveryId, newStatus, enteredCode || undefined);
     
-    if (res.success && newStatus === 'OUT_FOR_DELIVERY' && mission?.snapshot) {
+    if (!res.success) {
+      alert(res.error || 'Error al actualizar el estado');
+      setIsProcessing(false);
+      return;
+    }
+
+    if (newStatus === 'OUT_FOR_DELIVERY' && mission?.snapshot) {
       // MOTOR DE VUELO FASE 2: Volar a destino
       const courierId = mission.assignments?.[0]?.courier_id;
       setCouriers(prev => prev.map(c => {
@@ -147,7 +166,7 @@ export function TacticalMap({
               {/* Fondo del Mapa */}
               <div className="absolute inset-0 z-0 opacity-40 grayscale"
                 style={{
-                  backgroundImage: "url('/mapa-bblanca.png')",
+                  backgroundImage: `url(${mapaBblanca.src})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}>
@@ -437,9 +456,15 @@ export function TacticalMap({
                     ))}
                   </div>
 
-                  <div className="text-[9px] text-zinc-400 mb-4 flex items-center gap-2 border-l-2 pl-2" style={{ borderLeftColor: missionColor }}>
+                  <div className="text-[9px] text-zinc-400 mb-2 flex items-center gap-2 border-l-2 pl-2" style={{ borderLeftColor: missionColor }}>
                     LINK: <span className="text-white font-bold">{m.assignments?.[0]?.courier?.name || 'N/A'}</span>
                   </div>
+
+                  {m.confirmation_code && (
+                    <div className="text-[9px] text-zinc-400 mb-2 flex items-center gap-2 border-l-2 pl-2" style={{ borderLeftColor: '#F59E0B' }}>
+                      CÓDIGO OTP (CLIENTE): <span className="text-yellow-400 font-bold">{m.confirmation_code}</span>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 gap-2">
                     {m.status === 'COURIER_ASSIGNED' && (

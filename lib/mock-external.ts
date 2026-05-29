@@ -52,3 +52,26 @@ export async function mockNotifyPaymentClose(orderId: string) {
 
   return response;
 }
+
+export async function mockSendConfirmationCodeToBuyer(orderId: string, code: string) {
+  const endpoint = `/buyer/order/${orderId}/confirmation-code`;
+  const payload = { code };
+  const response = { success: true };
+
+  console.log(`\n======================================`);
+  console.log(`📡 [MOCK API CALL OUT] -> POST ${endpoint}`);
+  console.log(`📦 Payload: ${JSON.stringify(payload)}`);
+  console.log(`✅ Resultado: Código de confirmación enviado a Buyer App.`);
+  console.log(`======================================\n`);
+
+  await logApiTraffic({
+    direction: 'OUTBOUND',
+    endpoint,
+    method: 'POST',
+    request_payload: payload,
+    response_payload: response,
+    status_code: 200
+  });
+
+  return response;
+}

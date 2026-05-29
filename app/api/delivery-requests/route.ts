@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { logApiTraffic } from '@/lib/traveler-logger';
+import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
 
 const deliverySchema = z.object({
   order_id: z.string().min(1, "Order ID requerido"),
@@ -35,9 +36,13 @@ export async function POST(req: Request) {
     const bX = body.buyer_x ?? (Math.floor(Math.random() * 9000) + 500);
     const bY = body.buyer_y ?? (Math.floor(Math.random() * 9000) + 500);
     
+    // Generar Código OTP de Confirmación aleatorio de 4 dígitos
+    const confirmationCode = Math.floor(1000 + Math.random() * 9000).toString();
+
     const delivery = await prisma.delivery.create({
       data: {
         order_id: body.order_id,
+        confirmation_code: confirmationCode,
         snapshot: {
           create: {
             seller_id: body.seller_id,
@@ -55,6 +60,9 @@ export async function POST(req: Request) {
         }
       }
     });
+
+    // Simular el envío del código OTP a la Buyer App
+    await mockSendConfirmationCodeToBuyer(body.order_id, confirmationCode);
 
     const response = NextResponse.json(delivery, { status: 201 });
     

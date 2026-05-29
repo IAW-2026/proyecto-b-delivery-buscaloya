@@ -62,15 +62,27 @@ export async function assignCourier(deliveryId: string, courierId: string) {
     }
 
     revalidatePath('/admin/dispatch');
+    revalidatePath('/dashboard');
     return { success: true };
   } catch (e: any) {
     return { success: false, error: e.message };
   }
 }
 
-export async function updateDeliveryStatus(deliveryId: string, newStatus: DeliveryStatus) {
+export async function updateDeliveryStatus(deliveryId: string, newStatus: DeliveryStatus, code?: string) {
   try {
     await prisma.$transaction(async (tx) => {
+      // Validar código OTP si se solicita completar la entrega
+      if (newStatus === 'DELIVERED') {
+        const delivery = await tx.delivery.findUnique({
+          where: { id: deliveryId }
+        });
+        if (!delivery) throw new Error('Entrega no encontrada');
+        if (!code || delivery.confirmation_code !== code) {
+          throw new Error('CÓDIGO DE CONFIRMACIÓN OTP INVÁLIDO');
+        }
+      }
+
       // Actualizar Delivery
       await tx.delivery.update({
         where: { id: deliveryId },
@@ -149,14 +161,16 @@ export async function updateDeliveryStatus(deliveryId: string, newStatus: Delive
       } else if (newStatus === 'OUT_FOR_DELIVERY') {
         await mockNotifyOrderStatusChange(delivery.order_id, 'OUT_FOR_DELIVERY', 'Dron en tránsito a destino');
       } else if (newStatus === 'DELIVERED') {
-        await mockNotifyOrderStatusChange(delivery.order_id, 'DELIVERED', 'Misión completada');
-        await mockNotifyPaymentClose(delivery.order_id);
+        // Sin actualizar status a nadie por ahora según especificación
+        // await mockNotifyOrderStatusChange(delivery.order_id, 'DELIVERED', 'Misión completada');
+        // await mockNotifyPaymentClose(delivery.order_id);
       } else if (newStatus === 'CANCELLED_SUCCESSFULLY') {
         await mockNotifyOrderStatusChange(delivery.order_id, 'CANCELLED_SUCCESSFULLY', 'Misión abortada');
       }
     }
 
     revalidatePath('/admin/dispatch');
+    revalidatePath('/dashboard');
     return { success: true };
   } catch (e: any) {
     return { success: false, error: e.message };

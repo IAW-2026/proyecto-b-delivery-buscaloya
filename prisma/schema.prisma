@@ -63,6 +63,7 @@ model Delivery {
   order_id        String                    @unique
   status          DeliveryStatus            @default(ACCEPTED_FOR_ASSIGNMENT)
   color_code      String?                   @default("#FF007F")
+  confirmation_code String?
   created_at      DateTime                  @default(now())
   updated_at      DateTime                  @updatedAt
   snapshot        DeliveryContextSnapshot?
