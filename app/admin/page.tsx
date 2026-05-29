@@ -80,7 +80,7 @@ export default async function AdminPage({
               </tr>
             </thead>
             <tbody className="font-mono text-sm">
-              {deliveries.map(d => (
+              {deliveries.map((d: any) => (
                 <tr key={d.id} className="border-b border-gray-800 last:border-0 hover:bg-gray-900 transition-colors duration-75">
                   <td className="p-4 text-white font-bold">{d.id.slice(0, 8)}...</td>
                   <td className="p-4 text-gray-400">{d.order_id}</td>
