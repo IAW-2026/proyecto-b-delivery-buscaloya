@@ -24,7 +24,7 @@ export function Pagination({ totalItems, itemsPerPage }: { totalItems: number, i
   };
 
   return (
-    <div className="flex justify-between items-center mt-6 border-t border-white pt-4 font-mono uppercase text-sm">
+    <div className="flex justify-center items-center gap-4 mt-6 border-t border-white pt-4 font-mono uppercase text-sm">
       {currentPage > 1 ? (
         <Link href={createPageUrl(currentPage - 1)} className="border border-brand-neon text-brand-neon px-4 py-2 hover:bg-brand-neon hover:text-black transition-colors duration-75">
           &lt;
