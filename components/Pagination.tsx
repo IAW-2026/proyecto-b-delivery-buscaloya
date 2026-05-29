@@ -27,9 +27,9 @@ export function Pagination({ totalItems, itemsPerPage }: { totalItems: number, i
     <div className="flex justify-between items-center mt-6 border-t border-white pt-4 font-mono uppercase text-sm">
       {currentPage > 1 ? (
         <Link href={createPageUrl(currentPage - 1)} className="border border-brand-neon text-brand-neon px-4 py-2 hover:bg-brand-neon hover:text-black transition-colors duration-75">
-          &lt; Anterior
+          &lt;
         </Link>
-      ) : <div className="px-4 py-2 opacity-50 border border-gray-600 text-gray-600 cursor-not-allowed">&lt; Anterior</div>}
+      ) : <div className="px-4 py-2 opacity-50 border border-gray-600 text-gray-600 cursor-not-allowed">&lt;</div>}
       
       <span className="tracking-widest border px-4 py-2 border-dashed border-gray-600">
         PAG {currentPage} {"//"} {totalPages}
@@ -37,9 +37,9 @@ export function Pagination({ totalItems, itemsPerPage }: { totalItems: number, i
       
       {currentPage < totalPages ? (
         <Link href={createPageUrl(currentPage + 1)} className="border border-brand-neon text-brand-neon px-4 py-2 hover:bg-brand-neon hover:text-black transition-colors duration-75">
-          Siguiente &gt;
+          &gt;
         </Link>
-      ) : <div className="px-4 py-2 opacity-50 border border-gray-600 text-gray-600 cursor-not-allowed">Siguiente &gt;</div>}
+      ) : <div className="px-4 py-2 opacity-50 border border-gray-600 text-gray-600 cursor-not-allowed">&gt;</div>}
     </div>
   );
 }
