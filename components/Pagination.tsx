@@ -25,7 +25,7 @@ export function Pagination({ totalItems, itemsPerPage }: { totalItems: number, i
       ) : <div className="px-4 py-2 opacity-50 border border-gray-600 text-gray-600 cursor-not-allowed">&lt; Anterior</div>}
       
       <span className="tracking-widest border px-4 py-2 border-dashed border-gray-600">
-        PAG {currentPage} // {totalPages}
+        PAG {currentPage} {"//"} {totalPages}
       </span>
       
       {currentPage < totalPages ? (

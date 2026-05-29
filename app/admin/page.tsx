@@ -4,7 +4,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { Pagination } from '@/components/Pagination';
 import { StatusBadge } from '@/components/StatusBadge';
 import { UserButton } from '@clerk/nextjs';
-import { fixMissingCoordinates, fixMissionCoordinates } from './actions';
+import { fixMissingCoordinatesFormAction, fixMissionCoordinatesFormAction } from './actions';
 import { TriggerOrderButton as TriggerButton } from './trigger-button';
 
 export default async function AdminPage({
@@ -51,12 +51,12 @@ export default async function AdminPage({
         <h3 className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.3em] mb-4">Mantenimiento de Red</h3>
         <div className="flex flex-wrap gap-4">
           <TriggerButton />
-          <form action={fixMissingCoordinates}>
+          <form action={fixMissingCoordinatesFormAction}>
             <button type="submit" className="bg-transparent border border-zinc-800 text-zinc-500 px-4 py-2 text-[10px] hover:border-white hover:text-white transition-all font-mono uppercase">
               [ Recalibrate_Drones ]
             </button>
           </form>
-          <form action={fixMissionCoordinates}>
+          <form action={fixMissionCoordinatesFormAction}>
             <button type="submit" className="bg-transparent border border-zinc-800 text-zinc-500 px-4 py-2 text-[10px] hover:border-white hover:text-white transition-all font-mono uppercase">
               [ Recalibrate_Missions ]
             </button>

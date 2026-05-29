@@ -53,7 +53,7 @@ export default async function DashboardPage() {
             <h2 className="text-[#FF007F] font-mono text-[10px] tracking-[0.3em] uppercase">Tactical Control Center</h2>
             <UserButton />
           </div>
-          <h1 className="text-3xl md:text-5xl font-sans uppercase tracking-tighter leading-none text-white">Console <span className="text-[#FF007F]">//</span> Radar</h1>
+          <h1 className="text-3xl md:text-5xl font-sans uppercase tracking-tighter leading-none text-white">Console <span className="text-[#FF007F]">{"//"}</span> Radar</h1>
         </div>
         <div className="flex flex-wrap gap-6 mt-4 md:mt-0 items-center">
           {weather && (

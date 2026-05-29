@@ -102,3 +102,11 @@ export async function fixMissionCoordinates() {
     return { success: false, error: error.message };
   }
 }
+
+export async function fixMissingCoordinatesFormAction(formData: FormData): Promise<void> {
+  await fixMissingCoordinates();
+}
+
+export async function fixMissionCoordinatesFormAction(formData: FormData): Promise<void> {
+  await fixMissionCoordinates();
+}
