@@ -1,3 +1,9 @@
+/**
+ * API ENDPOINT: GET/DELETE /api/logs
+ * DESCRIPCIÓN: Endpoint del sistema de auditoría Traveler's Log.
+ *   - GET: Devuelve los últimos 20 registros de tráfico JSON (entrantes y salientes).
+ *   - DELETE: Limpia todo el historial de logs de auditoría.
+ */
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 

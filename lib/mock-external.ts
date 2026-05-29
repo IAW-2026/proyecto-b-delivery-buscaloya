@@ -1,7 +1,11 @@
+/**
+ * MOCKS DE INTEGRACIÓN: lib/mock-external.ts
+ * DESCRIPCIÓN: Implementa la simulación de llamadas salientes (outbound) hacia el ecosistema de aplicaciones (Seller App, Buyer App, Payments App).
+ * CARACTERÍSTICAS:
+ *   - Permite cumplir con el requisito obligatorio de aislamiento en la Etapa 2 de desarrollo individual.
+ *   - Simula las llamadas salientes e interactúa con `logApiTraffic` para registrar la auditoría de salidas en producción.
+ */
 import { logApiTraffic } from './traveler-logger';
-
-// Mocks de las APIs de otras webapps (Seller, Buyer, Payment)
-// Requerimiento para aislamiento en Etapa 2.
 
 export async function mockNotifyOrderStatusChange(orderId: string, status: string, message: string) {
   const endpoint = `/orders/${orderId}/status`;

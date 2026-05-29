@@ -1,3 +1,8 @@
+/**
+ * API ENDPOINT: GET /api/deliveries/pending
+ * DESCRIPCIÓN: Devuelve una lista de todos los envíos pendientes de asignación de dron (estado ACCEPTED_FOR_ASSIGNMENT).
+ * ROL EN EL ECOSISTEMA: Utilizado por el Radar Táctico mediante short-polling (cada 3s) para detectar nuevos envíos automáticamente.
+ */
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 

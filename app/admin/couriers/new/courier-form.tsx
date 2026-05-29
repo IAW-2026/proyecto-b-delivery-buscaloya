@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * COMPONENTE ADMINISTRATIVO: app/admin/couriers/new/courier-form.tsx
+ * DESCRIPCIÓN: Formulario dinámico brutalista reutilizable para la creación y edición de drones de la flota (Couriers).
+ * CARACTERÍSTICAS:
+ *   - Muestra el listado de operadores reales detectados en Clerk a la derecha permitiendo su vinculación de ID con un click.
+ *   - Maneja validaciones visuales del lado del cliente, estados de carga y retroalimentación de errores enviados por el servidor.
+ */
 import { useActionState, useState } from 'react';
 import Link from 'next/link';
 

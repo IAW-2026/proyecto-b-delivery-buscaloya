@@ -1,3 +1,10 @@
+/**
+ * PÁGINA VISUAL: GET /admin/couriers/[id]
+ * DESCRIPCIÓN: Formulario de modificación (Edición) para un dron específico de la flota.
+ * CARACTERÍSTICAS:
+ *   - Recupera dinámicamente los datos del dron a través de su ID utilizando params asíncronos.
+ *   - Envía los datos actualizados mediante una Server Action segura (`updateCourier`).
+ */
 import { prisma } from '@/lib/prisma';
 import { CourierForm } from '../new/courier-form';
 import { updateCourier } from './actions';

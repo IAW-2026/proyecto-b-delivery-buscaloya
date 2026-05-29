@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * COMPONENTE REUTILIZABLE: components/SearchBar.tsx
+ * DESCRIPCIÓN: Barra de búsqueda brutalista.
+ * CARACTERÍSTICAS:
+ *   - Implementa búsqueda del lado del cliente inyectando y actualizando dinámicamente el parámetro `?search=...` en la URL.
+ *   - Setea la página automáticamente a 1 al buscar.
+ */
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, FormEvent } from 'react';
 

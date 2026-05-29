@@ -1,5 +1,13 @@
 'use server';
 
+/**
+ * SERVER ACTIONS DE CREACIÓN: app/admin/couriers/new/actions.ts
+ * DESCRIPCIÓN: Valida y procesa la creación (Alta) de nuevos drones en la base de datos de producción.
+ * CARACTERÍSTICAS:
+ *   - Valida la información del formulario utilizando Zod en el servidor.
+ *   - Asigna coordenadas iniciales de geolocalización de forma aleatoria para telemetría inicial.
+ *   - Redirecciona de vuelta al listado principal tras la creación.
+ */
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';

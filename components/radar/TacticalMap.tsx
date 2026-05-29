@@ -1,5 +1,14 @@
 'use client';
 
+/**
+ * COMPONENTE NÚCLEO: components/radar/TacticalMap.tsx
+ * DESCRIPCIÓN: El "Radar Táctico" o mapa interactivo de control de flota de drones.
+ * CARACTERÍSTICAS:
+ *   - Mapea dinámicamente coordenadas de latitud/longitud en un plano de porcentajes cartesianos en pixeles.
+ *   - Permite hacer Zoom & Pan táctico usando ratón/gestos táctiles mediante `react-zoom-pan-pinch`.
+ *   - Implementa short-polling cada 3 segundos a `/api/deliveries/pending` para alertas Uber-style de asignación.
+ *   - Llama a Server Actions de forma asíncrona para avanzar el viaje y actualizar los mocks en producción.
+ */
 import { useState, useEffect } from 'react';
 import { assignCourier, updateDeliveryStatus } from './actions';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";

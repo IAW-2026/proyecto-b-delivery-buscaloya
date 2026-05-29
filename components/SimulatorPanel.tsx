@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * COMPONENTE FLOTANTE: components/SimulatorPanel.tsx
+ * DESCRIPCIÓN: Panel de Simulación y Visualización de Tráfico (Simulator & Traveler's Log).
+ * CARACTERÍSTICAS:
+ *   - Tab SIMULATOR: Permite "disparar" peticiones HTTP locales simuladas al endpoint `/api/delivery-requests`.
+ *   - Tab TRAFFIC LOGS: Realiza short-polling al endpoint `/api/logs` para listar e inspeccionar payloads de red entrantes/salientes en tiempo real.
+ */
 import { useState, useEffect } from 'react';
 
 export function SimulatorPanel() {

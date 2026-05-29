@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * PÁGINA DE ERROR GLOBAL: app/error.tsx
+ * DESCRIPCIÓN: Manejador de errores del lado del cliente y del servidor (ErrorBoundary) en Next.js.
+ * CARACTERÍSTICAS:
+ *   - Captura excepciones inesperadas en tiempo de ejecución en Server y Client Components de forma elegante.
+ *   - Muestra el mensaje de error de forma segura y proporciona un botón interactivo para reintentar la renderización (`reset()`).
+ */
 import { useEffect } from 'react';
 
 export default function Error({

@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * COMPONENTE ADMINISTRATIVO: app/admin/trigger-button.tsx
+ * DESCRIPCIÓN: Botón interactivo para disparar pedidos simulados (mocks) en el panel de control.
+ * CARACTERÍSTICAS:
+ *   - Llama de forma asíncrona a la Server Action `triggerMockOrder` para registrar un pedido en Supabase sin dependencias externas.
+ *   - Maneja estados de carga y notificaciones emergentes tras el éxito o fallo de la simulación.
+ */
 import { useState } from 'react';
 import { triggerMockOrder, fixMissingCoordinates } from './actions';
 

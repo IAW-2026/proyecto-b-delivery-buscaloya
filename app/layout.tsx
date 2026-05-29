@@ -1,3 +1,11 @@
+/**
+ * LAYOUT PRINCIPAL: app/layout.tsx
+ * DESCRIPCIÓN: Layout raíz de la aplicación que provee fuentes, estilos y el contexto de autenticación Clerk.
+ * CARACTERÍSTICAS:
+ *   - Configura las fuentes de Google Fonts (Archivo Black y JetBrains Mono) con variables de CSS.
+ *   - Envuelve la aplicación entera con `ClerkProvider` para autenticación segura.
+ *   - Inyecta el panel de simulación `SimulatorPanel` de forma global en todas las vistas de la app.
+ */
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from "next";
 import { Archivo_Black, JetBrains_Mono } from 'next/font/google';

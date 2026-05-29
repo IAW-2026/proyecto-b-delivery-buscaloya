@@ -1,3 +1,10 @@
+/**
+ * PÁGINA VISUAL: GET /admin/couriers/new
+ * DESCRIPCIÓN: Formulario de registro (Alta) para nuevos drones de la flota.
+ * CARACTERÍSTICAS:
+ *   - Recupera la lista de operadores registrados desde la API de Clerk para permitir su asignación.
+ *   - Envía los datos validados del formulario mediante una Server Action segura (`createCourier`).
+ */
 import { prisma } from '@/lib/prisma';
 import { CourierForm } from './courier-form';
 import { createCourier } from './actions';

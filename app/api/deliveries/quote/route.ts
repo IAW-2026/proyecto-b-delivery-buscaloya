@@ -1,3 +1,10 @@
+/**
+ * API ENDPOINT: POST /api/deliveries/quote
+ * DESCRIPCIÓN: Cotización de costo de envío (Delivery Quote).
+ * CARACTERÍSTICAS:
+ *   - Calcula y devuelve un costo estimado mock basado en la distancia del trayecto de entrega en pesos argentinos (ARS).
+ *   - Utilizado por la App de Ventas (Seller) para cotizar el precio de envío al cliente final en el Checkout.
+ */
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {

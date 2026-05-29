@@ -1,3 +1,10 @@
+/**
+ * COMPONENTE REUTILIZABLE: components/StatusBadge.tsx
+ * DESCRIPCIÓN: Etiqueta de estado (Badge) de estética brutalista.
+ * CARACTERÍSTICAS:
+ *   - Proporciona estilos, bordes y colores específicos dependiendo del estado de entrega o dron (AVAILABLE, DELIVERED, OFFLINE, etc.).
+ *   - Normaliza los nombres de los estados reemplazando los guiones bajos por espacios legibles.
+ */
 import React from 'react';
 
 export function StatusBadge({ status }: { status: string }) {

@@ -1,3 +1,10 @@
+/**
+ * PÁGINA 404: app/not-found.tsx
+ * DESCRIPCIÓN: Manejador visual para rutas inexistentes (Página 404 Not Found) en Next.js.
+ * CARACTERÍSTICAS:
+ *   - Muestra un mensaje amigable cuando un usuario o sistema intenta acceder a una URL inválida.
+ *   - Proporciona un enlace de retorno seguro a la landing page principal.
+ */
 import Link from 'next/link';
 
 export default function NotFound() {

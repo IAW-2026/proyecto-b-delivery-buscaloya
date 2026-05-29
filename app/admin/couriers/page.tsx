@@ -1,3 +1,11 @@
+/**
+ * PÁGINA VISUAL: GET /admin/couriers
+ * DESCRIPCIÓN: Listado y control de flota de drones (Couriers).
+ * CARACTERÍSTICAS:
+ *   - Muestra el listado de drones con paginación y búsqueda integrada mediante URL.
+ *   - Enlaza al formulario de registro de nuevas unidades.
+ *   - Permite ingresar a la edición detallada de cada dron.
+ */
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { SearchBar } from '@/components/SearchBar';

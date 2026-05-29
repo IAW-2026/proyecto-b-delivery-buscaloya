@@ -1,3 +1,10 @@
+/**
+ * PÁGINA PRINCIPAL: GET / (Landing Page)
+ * DESCRIPCIÓN: Pantalla de bienvenida (Landing Page) de la aplicación de Delivery.
+ * CARACTERÍSTICAS:
+ *   - Estética brutalista y cyberpunk con grilla decorativa de fondo.
+ *   - Enlaces rápidos para iniciar la operación (Dashboard / Radar) y para el Panel de Administración (Admin Terminal).
+ */
 import Link from 'next/link';
 
 export default function Home() {

@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * COMPONENTE REUTILIZABLE: components/Pagination.tsx
+ * DESCRIPCIÓN: Paginador brutalista y asincrónico por URL.
+ * CARACTERÍSTICAS:
+ *   - Calcula dinámicamente las páginas totales y genera los enlaces de navegación usando URLSearchParams (`?page=...`).
+ *   - Diseñado bajo accesibilidad básica e indicadores de estado inactivos (disabled).
+ */
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 

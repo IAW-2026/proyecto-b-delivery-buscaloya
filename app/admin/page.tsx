@@ -1,3 +1,11 @@
+/**
+ * PÁGINA VISUAL: GET /admin
+ * DESCRIPCIÓN: Panel de Administración principal del sistema de Delivery.
+ * CARACTERÍSTICAS:
+ *   - Muestra el listado paginado y con filtros de búsqueda de todos los envíos (telemetría de envíos).
+ *   - Permite recalibrar las coordenadas de drones y misiones mediante Server Actions de mantenimiento.
+ *   - Enlaza a la gestión de flota (/admin/couriers) y cuenta con botón de disparar pedidos mock.
+ */
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { SearchBar } from '@/components/SearchBar';

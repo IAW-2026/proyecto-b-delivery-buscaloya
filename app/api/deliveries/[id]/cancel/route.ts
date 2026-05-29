@@ -1,3 +1,8 @@
+/**
+ * API ENDPOINT: POST /api/deliveries/[id]/cancel
+ * DESCRIPCIÓN: Cancela una misión de entrega activa marcando su estado como CANCELLED_SUCCESSFULLY en Supabase.
+ * ROL EN EL ECOSISTEMA: Utilizado de forma aislada en Etapa 2 y consumido por otros módulos en Etapa 3.
+ */
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { DeliveryStatus } from '@prisma/client';

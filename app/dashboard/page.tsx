@@ -1,3 +1,11 @@
+/**
+ * PÁGINA VISUAL: GET /dashboard
+ * DESCRIPCIÓN: Consola de control táctil (Radar Táctico).
+ * CARACTERÍSTICAS:
+ *   - Renderiza el mapa táctil interactivo en tiempo real (`TacticalMap`).
+ *   - Consume en el servidor la API externa de Open-Meteo para obtener telemetría meteorológica.
+ *   - Protegido por Clerk para acceso exclusivo de operadores autenticados.
+ */
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { TacticalMap } from '@/components/radar/TacticalMap';

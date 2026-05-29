@@ -1,5 +1,13 @@
 'use server';
 
+/**
+ * SERVER ACTIONS DE EDICIÓN: app/admin/couriers/[id]/actions.ts
+ * DESCRIPCIÓN: Valida y procesa la edición/actualización de los datos de un dron en PostgreSQL.
+ * CARACTERÍSTICAS:
+ *   - Valida estrictamente los campos utilizando Zod en el servidor.
+ *   - Maneja y responde con errores descriptivos en caso de validación fallida o excepciones de base de datos.
+ *   - Redirecciona de vuelta al listado principal tras un guardado exitoso.
+ */
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';

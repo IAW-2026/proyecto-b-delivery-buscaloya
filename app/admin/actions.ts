@@ -1,5 +1,12 @@
 'use server';
 
+/**
+ * SERVER ACTIONS DE ADMINISTRACIÓN: app/admin/actions.ts
+ * DESCRIPCIÓN: Acciones del servidor para realizar tareas de administración y calibración en el panel de control.
+ * ACCIONES PRINCIPALES:
+ *   - `triggerMockOrder`: Genera un pedido simulado (mock) con datos de Bahía Blanca para testing del radar táctico.
+ *   - `fixMissingCoordinates` y `fixMissionCoordinates`: Rutinas de calibración para corregir coordenadas nulas o vacías.
+ */
 import { prisma } from '@/lib/prisma';
 import { fakerES as faker } from '@faker-js/faker';
 import { revalidatePath } from 'next/cache';

@@ -1,5 +1,12 @@
 'use server';
 
+/**
+ * SERVER ACTIONS DE RADAR: components/radar/actions.ts
+ * DESCRIPCIÓN: Acciones del lado del servidor para gestionar el despacho e interactuar con la base de datos de producción.
+ * ACCIONES PRINCIPALES:
+ *   - `assignCourier`: Vincula un dron disponible a una entrega de forma atómica y notifica mediante mock (COURIER_ASSIGNED).
+ *   - `updateDeliveryStatus`: Avanza el estado de la entrega (PICKED_UP, OUT_FOR_DELIVERY, DELIVERED, CANCELLED) en transacciones seguras de base de datos.
+ */
 import { prisma } from '@/lib/prisma';
 import { mockNotifyOrderStatusChange, mockNotifyPaymentClose } from '@/lib/mock-external';
 import { DeliveryStatus, AvailabilityStatus, EventSource } from '@prisma/client';

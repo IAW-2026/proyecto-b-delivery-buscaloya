@@ -1,3 +1,8 @@
+/**
+ * API ENDPOINT: POST /api/delivery-requests
+ * DESCRIPCIÓN: Recibe y procesa nuevas solicitudes de envío enviadas por los comercios (Sellers) y crea la orden en estado ACCEPTED_FOR_ASSIGNMENT.
+ * ROL EN EL ECOSISTEMA: Punto de entrada principal para que la App de Ventas (Seller) registre un envío cuando se concreta una compra.
+ */
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
