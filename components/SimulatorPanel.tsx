@@ -8,6 +8,7 @@
  *   - Tab TRAFFIC LOGS: Realiza short-polling al endpoint `/api/logs` para listar e inspeccionar payloads de red entrantes/salientes en tiempo real.
  */
 import { useState, useEffect } from 'react';
+import { triggerMockTracking } from '@/app/admin/actions';
 
 export function SimulatorPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,6 +72,23 @@ export function SimulatorPanel() {
     setTimeout(() => setStatus(null), 3000);
   };
 
+  const simulateIncomingTracking = async () => {
+    setStatus('PROCESANDO TELEMETRÍA...');
+    try {
+      const res = await triggerMockTracking();
+      if (res.success) {
+        setStatus(`TELEMETRÍA EMITIDA: ${res.count} DRONES`);
+        if (activeTab === 'LOGS') fetchLogs();
+      } else {
+        setStatus(`ERROR: ${res.error}`);
+      }
+    } catch (e: any) {
+      setStatus('ERROR DE CONEXIÓN');
+    }
+    setTimeout(() => setStatus(null), 3000);
+  };
+
+
   return (
     <>
       {/* Botón flotante para abrir el centro de control */}
@@ -103,13 +121,22 @@ export function SimulatorPanel() {
           <div className="p-6 overflow-y-auto">
             {activeTab === 'SIM' ? (
               <div className="flex flex-col gap-4">
-                <h3 className="text-brand-safety text-sm font-bold uppercase tracking-widest mb-2">Simular Petición Inbound</h3>
-                <button 
-                  onClick={simulateIncomingOrder}
-                  className="bg-transparent border border-white text-white p-4 text-xs uppercase hover:bg-white hover:text-black transition-all font-bold"
-                >
-                  DISPARAR PEDIDO DE SELLER
-                </button>
+                <h3 className="text-brand-safety text-sm font-bold uppercase tracking-widest mb-2">Simular Peticiones</h3>
+                <div className="flex flex-col gap-2">
+                  <button 
+                    onClick={simulateIncomingOrder}
+                    className="bg-transparent border border-white text-white p-4 text-xs uppercase hover:bg-white hover:text-black transition-all font-bold"
+                  >
+                    DISPARAR PEDIDO [MOCK]
+                  </button>
+
+                  <button 
+                    onClick={simulateIncomingTracking}
+                    className="bg-transparent border border-white text-white p-4 text-xs uppercase hover:bg-white hover:text-black transition-all font-bold"
+                  >
+                    DISPARAR TELEMETRÍA [MOCK]
+                  </button>
+                </div>
 
                 <div className="mt-4 p-3 border border-dashed border-gray-700 text-[10px] text-gray-500 uppercase">
                   STATUS_ENGINE: {status || 'IDLE'}

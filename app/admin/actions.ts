@@ -11,6 +11,7 @@ import { prisma } from '@/lib/prisma';
 import { fakerES as faker } from '@faker-js/faker';
 import { revalidatePath } from 'next/cache';
 import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
+import { logApiTraffic } from '@/lib/traveler-logger';
 
 export async function triggerMockOrder() {
   try {
@@ -74,54 +75,85 @@ export async function triggerMockOrder() {
   }
 }
 
-export async function fixMissingCoordinates() {
+export async function triggerMockTracking() {
   try {
-    const couriers = await prisma.courier.findMany();
+    const activeDeliveries = await prisma.delivery.findMany({
+      where: {
+        status: { in: ['COURIER_ASSIGNED', 'PICKED_UP', 'OUT_FOR_DELIVERY'] }
+      },
+      include: {
+        assignments: {
+          where: { status: 'ASSIGNED' },
+          include: { courier: true },
+          take: 1
+        }
+      }
+    });
 
-    for (const c of couriers) {
-      await prisma.courier.update({
-        where: { id: c.id },
+    if (activeDeliveries.length === 0) {
+      return { success: false, error: 'NO HAY MISIONES ACTIVAS EN CURSO' };
+    }
+
+    let count = 0;
+    const MAP_BOUNDS = {
+      n: -38.68,
+      s: -38.76,
+      w: -62.33,
+      e: -62.21
+    };
+
+    for (const delivery of activeDeliveries) {
+      const assignment = delivery.assignments[0];
+      const courier = assignment?.courier;
+      
+      let lat = -38.7196;
+      let lng = -62.2724;
+
+      if (courier && courier.last_x !== null && courier.last_y !== null) {
+        const x_percentage = courier.last_x / 10000;
+        const y_percentage = courier.last_y / 10000;
+        lng = MAP_BOUNDS.w + x_percentage * (MAP_BOUNDS.e - MAP_BOUNDS.w);
+        lat = MAP_BOUNDS.n - y_percentage * (MAP_BOUNDS.n - MAP_BOUNDS.s);
+      } else {
+        lat = -38.7196 + (Math.random() - 0.5) * 0.05;
+        lng = -62.2724 + (Math.random() - 0.5) * 0.05;
+      }
+
+      const trackingPoint = await prisma.deliveryTrackingPoint.create({
         data: {
-          last_x: Math.floor(Math.random() * 10000),
-          last_y: Math.floor(Math.random() * 10000),
+          delivery_id: delivery.id,
+          lat: Number(lat.toFixed(6)),
+          lon: Number(lng.toFixed(6)),
+          source: 'COURIER_APP'
         }
       });
+
+      // Registrar en la bitácora de tráfico (Traffic Logs)
+      await logApiTraffic({
+        direction: 'INBOUND',
+        endpoint: `/api/deliveries/${delivery.id}/tracking`,
+        method: 'POST',
+        request_payload: {
+          delivery_id: delivery.id,
+          lat: Number(lat.toFixed(6)),
+          lng: Number(lng.toFixed(6)),
+          source: 'COURIER_APP'
+        },
+        response_payload: {
+          success: true,
+          tracking_point: trackingPoint
+        },
+        status_code: 201
+      });
+
+      count++;
     }
 
     revalidatePath('/dashboard');
-    return { success: true, count: couriers.length };
+    return { success: true, count };
   } catch (error: any) {
+    console.error("Tracking Sim Error:", error);
     return { success: false, error: error.message };
   }
 }
 
-export async function fixMissionCoordinates() {
-  try {
-    const snapshots = await prisma.deliveryContextSnapshot.findMany();
-
-    for (const s of snapshots) {
-      await prisma.deliveryContextSnapshot.update({
-        where: { id: s.id },
-        data: {
-          seller_x: Math.floor(Math.random() * 9000) + 500,
-          seller_y: Math.floor(Math.random() * 9000) + 500,
-          buyer_x: Math.floor(Math.random() * 9000) + 500,
-          buyer_y: Math.floor(Math.random() * 9000) + 500,
-        }
-      });
-    }
-
-    revalidatePath('/dashboard');
-    return { success: true, count: snapshots.length };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
-
-export async function fixMissingCoordinatesFormAction(formData: FormData): Promise<void> {
-  await fixMissingCoordinates();
-}
-
-export async function fixMissionCoordinatesFormAction(formData: FormData): Promise<void> {
-  await fixMissionCoordinates();
-}

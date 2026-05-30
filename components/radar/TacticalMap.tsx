@@ -29,6 +29,8 @@ export function TacticalMap({
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAssignmentFor, setShowAssignmentFor] = useState<any | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [showOtpFor, setShowOtpFor] = useState<any | null>(null);
+  const [otpCodeInput, setOtpCodeInput] = useState<string>('');
 
   useEffect(() => {
     setMounted(true);
@@ -98,24 +100,12 @@ export function TacticalMap({
   };
 
   const handleStatusChange = async (deliveryId: string, newStatus: any) => {
-    let enteredCode: string | null = null;
-    if (newStatus === 'DELIVERED') {
-      enteredCode = prompt("INGRESE CÓDIGO DE CONFIRMACIÓN DEL CLIENTE (OTP):");
-      if (enteredCode === null) {
-        return; // Operator cancelled prompt
-      }
-      if (enteredCode.trim() === '') {
-        alert("CÓDIGO DE CONFIRMACIÓN REQUERIDO");
-        return;
-      }
-    }
-
     setIsProcessing(true);
     
     // Buscar la misión para obtener coordenadas de destino
     const mission = activeMissions.find(m => m.id === deliveryId);
 
-    const res = await updateDeliveryStatus(deliveryId, newStatus, enteredCode || undefined);
+    const res = await updateDeliveryStatus(deliveryId, newStatus);
     
     if (!res.success) {
       alert(res.error || 'Error al actualizar el estado');
@@ -162,12 +152,12 @@ export function TacticalMap({
           }}
         >
           <TransformComponent wrapperClass="!w-full !h-full" contentClass="!w-full !h-full">
-            <div className="relative w-full h-full min-w-[1000px] min-h-[800px]">
+            <div className="relative w-full h-full">
               {/* Fondo del Mapa */}
               <div className="absolute inset-0 z-0 opacity-40 grayscale"
                 style={{
                   backgroundImage: `url(${mapaBblanca.src})`,
-                  backgroundSize: 'cover',
+                  backgroundSize: '100% 100%',
                   backgroundPosition: 'center',
                 }}>
               </div>
@@ -373,6 +363,57 @@ export function TacticalMap({
             </div>
           </div>
         )}
+        {/* POPUP DE VERIFICACIÓN OTP */}
+        {showOtpFor && (() => {
+          const missionColor = showOtpFor.color_code || '#FF007F';
+          return (
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 bg-black p-8 z-50 w-[95%] max-w-lg shadow-[12px_12px_0px]" style={{ borderColor: missionColor, boxShadow: `12px 12px 0px ${missionColor}` } as any}>
+              <div className="flex justify-between items-start mb-6">
+                <div className="text-black px-4 py-1 font-bold text-lg uppercase tracking-tighter" style={{ backgroundColor: missionColor }}>Secure_Delivery_Closure</div>
+                <button onClick={() => setShowOtpFor(null)} className="text-white text-xl font-bold hover:text-red-500">[/X]</button>
+              </div>
+
+              <div className="text-white mb-6">
+                <p className="text-[10px] uppercase text-zinc-400 mb-2">Misión de Entrega</p>
+                <h4 className="text-xl font-black">{showOtpFor.order_id}</h4>
+                <p className="text-xs text-zinc-500 mt-1.5 uppercase">Destinatario: {showOtpFor.snapshot?.buyer_name}</p>
+                <p className="text-xs text-zinc-500 uppercase">Dirección: {showOtpFor.snapshot?.buyer_address}</p>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <label className="text-[10px] uppercase tracking-widest font-bold" style={{ color: missionColor }}>Ingrese_Código_Confirmación_OTP:</label>
+                <input 
+                  type="text"
+                  maxLength={4}
+                  placeholder="0000"
+                  value={otpCodeInput}
+                  onChange={e => setOtpCodeInput(e.target.value.replace(/\D/g, ''))}
+                  className="w-full bg-zinc-900 border-2 text-white p-4 outline-none font-bold text-center text-3xl tracking-[0.5em] focus:border-white uppercase"
+                  style={{ borderColor: missionColor }}
+                />
+                
+                <button
+                  disabled={isProcessing || otpCodeInput.length !== 4}
+                  onClick={async () => {
+                    setIsProcessing(true);
+                    const res = await updateDeliveryStatus(showOtpFor.id, 'DELIVERED', otpCodeInput);
+                    if (res.success) {
+                      setShowOtpFor(null);
+                      setOtpCodeInput('');
+                    } else {
+                      alert(res.error || 'Código incorrecto');
+                    }
+                    setIsProcessing(false);
+                  }}
+                  className="w-full text-black p-5 font-black text-xl uppercase transition-all disabled:opacity-10 hover:bg-white hover:text-black"
+                  style={{ backgroundColor: missionColor }}
+                >
+                  {isProcessing ? 'CONFIRMANDO...' : 'CERRAR_OPERACIÓN'}
+                </button>
+              </div>
+            </div>
+          );
+        })()}
         
         {/* Controles Visuales */}
         <div className="absolute bottom-4 left-4 z-20 flex gap-2">
@@ -487,7 +528,10 @@ export function TacticalMap({
                     )}
                     {m.status === 'OUT_FOR_DELIVERY' && (
                       <button 
-                        onClick={() => handleStatusChange(m.id, 'DELIVERED')} 
+                        onClick={() => {
+                          setShowOtpFor(m);
+                          setOtpCodeInput('');
+                        }} 
                         className="border-2 font-bold py-2 text-[10px] transition-all uppercase hover:bg-white hover:text-black"
                         style={{ borderColor: missionColor, color: missionColor }}
                       >

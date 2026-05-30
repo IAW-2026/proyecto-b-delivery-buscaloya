@@ -95,7 +95,7 @@ export async function updateDeliveryStatus(deliveryId: string, newStatus: Delive
           delivery_id: deliveryId,
           status: newStatus,
           source: 'SYSTEM',
-          reason: `Cambio manual desde Radar`
+          reason: newStatus === 'DELIVERED' ? 'Close operation' : `Cambio manual desde Radar`
         }
       });
 
