@@ -15,11 +15,11 @@ La aplicación se encuentra deployada en **Vercel** en un entorno de producción
 Para facilitar y agilizar la evaluación de las secciones protegidas de la aplicación (`/dashboard` y `/admin`), se han pre-configurado y habilitado las siguientes credenciales de prueba en Clerk:
 
 *   **Operador de Radar (Rol Delivery - Acceso Exclusivo a Radar):**
-    *   **Email:** `delivery+clerktest@iaw.com`
+    *   **Email:** `delivery+clerk_test@iaw.com`
     *   **Contraseña:** `iawuser#`
     *   *Permisos:* Acceso completo al Radar Táctico (`/dashboard`) y panel de simulación. Si intenta ingresar al panel de administración, el sistema lo redireccionará automáticamente al radar por falta de permisos.
 *   **Administrador de Flota (Rol Admin - Acceso Total):**
-    *   **Email:** `admin+clerktest@iaw.com`
+    *   **Email:** `admin+clerk_test@iaw.com`
     *   **Contraseña:** `iawuser#`
     *   *Permisos:* Acceso irrestricto a la consola de Radar (`/dashboard`) y al panel de administración y couriers (`/admin`).
     *   *Configuración de Seguridad:* Para evitar malas prácticas de ciberseguridad, **no hay correos hardcodeados en el código**. En su lugar, se configuró el metadato externo y protegido de Clerk `{ "role": "admin" }` para este usuario.
@@ -32,7 +32,7 @@ Para facilitar y agilizar la evaluación de las secciones protegidas de la aplic
 
 Para recorrer y evaluar adecuadamente todas las funcionalidades del sistema táctico y logística, siga los siguientes pasos ordenados:
 
-1.  **Inicio de Sesión:** Ingrese a la Landing Page en `/` y haga clic en **Iniciar Operación** para ser redirigido al portal seguro de Clerk. Inicie sesión con cualquiera de las cuentas de prueba: `delivery+clerktest@iaw.com` para probar el rol operador, o `admin+clerktest@iaw.com` para probar permisos totales de administración (Contraseña común: `iawuser#`).
+1.  **Inicio de Sesión:** Ingrese a la Landing Page en `/` y haga clic en **Iniciar Operación** para ser redirigido al portal seguro de Clerk. Inicie sesión con cualquiera de las cuentas de prueba: `delivery+clerk_test@iaw.com` para probar el rol operador, o `admin+clerk_test@iaw.com` para probar permisos totales de administración (Contraseña común: `iawuser#`).
 2.  **Consola Táctica (Radar):** Tras autenticarse, accederá a la Consola de Control (`/dashboard`). Verá el mapa táctico digital de la ciudad de Bahía Blanca con datos cargados (drones, objetivos y líneas de navegación activas).
     *   *Navegación del Mapa:* Use la rueda del mouse o gestos táctiles para hacer Zoom, y mantenga presionado el botón derecho del mouse para desplazar la vista (Pan).
 3.  **Simular Entrada de Pedido:** Haga clic en el botón flotante naranja **[ CONTROL CENTER ]** en la esquina inferior derecha para desplegar la Cyber Deck. En la pestaña `SIMULATOR`, haga clic en el botón **DISPARAR PEDIDO [MOCK]**. Esto simulará que la aplicación de Ventas envía una orden para ser despachada.
@@ -62,7 +62,7 @@ Para garantizar la seguridad, las secciones críticas de control de flota y logs
 
 ## 5. Notas y Comentarios para la Corrección
 
-*   **Control de Acceso por Roles (RBAC Seguro y Descentralizado):** Se implementó un layout de seguridad (`app/admin/layout.tsx`) que intercepta y protege herméticamente la sección de administración `/admin` y todas sus sub-rutas. Para cumplir con los máximos estándares de ciberseguridad, **no existen correos electrónicos hardcodeados en el código fuente**. La autorización depende exclusivamente del metadato protegido `role` gestionado externamente y firmado criptográficamente por Clerk (`publicMetadata.role === 'admin'`). Si un usuario sin el rol `admin` (como el operador `delivery+clerktest@iaw.com`) intenta ingresar, es redirigido de inmediato en el servidor a `/dashboard`.
+*   **Control de Acceso por Roles (RBAC Seguro y Descentralizado):** Se implementó un layout de seguridad (`app/admin/layout.tsx`) que intercepta y protege herméticamente la sección de administración `/admin` y todas sus sub-rutas. Para cumplir con los máximos estándares de ciberseguridad, **no existen correos electrónicos hardcodeados en el código fuente**. La autorización depende exclusivamente del metadato protegido `role` gestionado externamente y firmado criptográficamente por Clerk (`publicMetadata.role === 'admin'`). Si un usuario sin el rol `admin` (como el operador `delivery+clerk_test@iaw.com`) intenta ingresar, es redirigido de inmediato en el servidor a `/dashboard`.
 *   **Protección de Rutas en Producción (proxy.ts):** Siguiendo los estándares nativos de Next.js 16 y Turbopack, la protección de rutas de Clerk se ejecuta de forma centralizada en el archivo de middleware oficial `proxy.ts` a nivel de raíz, validando sesiones de forma óptima en el Edge de Vercel.
 *   **Base de Datos Ricamente Poblada (Seeder):** Para evitar que el evaluador inicie el sistema vacío, el script `prisma/seed.ts` ejecuta primero una **purga total e irreversible de todas las tablas** de la base de datos en cascada para evitar duplicados o errores de integridad, y luego inserta **6 drones con estados variados**, **8 entregas en todas las etapas del ciclo de vida** y **12+ registros telemétricos simulados** en el historial.
 *   **Modal OTP Dinámico por Unidad:** La confirmación de entrega final no utiliza primitivos de navegador (`prompt`), sino una ventana emergente integrada que adopta dinámicamente el color de misión hexadecimal aleatorio generado al vincular el dron, garantizando coherencia de diseño.

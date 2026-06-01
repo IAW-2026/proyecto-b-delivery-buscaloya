@@ -65,8 +65,8 @@ async function main() {
   console.log('==================================================')
 
   // Buscar los Clerk IDs reales de los usuarios de pruebas
-  const deliveryClerkId = await getClerkUserIdByEmail('delivery+clerktest@iaw.com');
-  const adminClerkId = await getClerkUserIdByEmail('admin+clerktest@iaw.com');
+  const deliveryClerkId = await getClerkUserIdByEmail('delivery+clerk_test@iaw.com');
+  const adminClerkId = await getClerkUserIdByEmail('admin+clerk_test@iaw.com');
 
   console.log('\n==================================================')
   console.log('🚀 INICIANDO INSERCIÓN DE DATOS TÁCTICOS MOCK...')
