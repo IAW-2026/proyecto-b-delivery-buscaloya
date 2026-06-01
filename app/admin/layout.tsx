@@ -7,13 +7,17 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const user = await currentUser();
-  const email = user?.emailAddresses?.[0]?.emailAddress;
+  const role = user?.publicMetadata?.role;
 
-  // Si no está logueado o su correo no empieza con "admin" (ej. admin+clerktest@iaw.com)
-  // lo redirecciona de forma segura a la consola del Radar táctico (/dashboard)
-  if (!email || !email.toLowerCase().startsWith('admin')) {
+  // VERIFICACIÓN DE SEGURIDAD ABSOLUTA (NIVEL SERVIDOR):
+  // No existen correos electrónicos hardcodeados en el código fuente.
+  // La autorización y el control de acceso dependen exclusivamente del metadato protegido "role"
+  // gestionado y firmado criptográficamente de forma externa en los servidores de Clerk.
+  if (role !== 'admin') {
     redirect('/dashboard');
   }
 
   return <>{children}</>;
 }
+
+

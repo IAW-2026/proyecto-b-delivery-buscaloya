@@ -22,8 +22,11 @@ Para facilitar y agilizar la evaluación de las secciones protegidas de la aplic
     *   **Email:** `admin+clerktest@iaw.com`
     *   **Contraseña:** `iawuser#`
     *   *Permisos:* Acceso irrestricto a la consola de Radar (`/dashboard`) y al panel de administración y couriers (`/admin`).
+    *   *Configuración de Seguridad:* Para evitar malas prácticas de ciberseguridad, **no hay correos hardcodeados en el código**. En su lugar, se configuró el metadato externo y protegido de Clerk `{ "role": "admin" }` para este usuario.
 
-*(Nota: Si Clerk solicita un código de verificación al iniciar sesión debido a detección de nuevo dispositivo, puede ingresar el código estático de prueba **`424242`** para acceder de inmediato sin depender de un buzón real).*
+*(Nota 1: Si Clerk solicita un código de verificación al iniciar sesión debido a detección de nuevo dispositivo, puede ingresar el código estático de prueba **`424242`** para acceder de inmediato sin depender de un buzón real).*
+
+*(Nota 2: Para asignar el rol de administrador a cualquier usuario en Clerk, ingrese a su Dashboard de Clerk -> **Users** -> seleccione el usuario -> busque **Metadata** -> edite **Public Metadata** con el JSON `{ "role": "admin" }`).*
 
 ---
 
@@ -61,7 +64,7 @@ Para garantizar la seguridad, las secciones críticas de control de flota y logs
 
 ## 5. Notas y Comentarios para la Corrección
 
-*   **Control de Acceso por Roles (RBAC):** Se implementó un layout de seguridad (`app/admin/layout.tsx`) que intercepta y protege herméticamente la sección de administración `/admin` y todas sus sub-rutas. Si un usuario logueado que no es administrador (por ejemplo, el operador `delivery+clerktest@iaw.com`) intenta acceder a `/admin`, el sistema inspecciona su email en el servidor y lo redirige automáticamente a `/dashboard`, cumpliendo con la segregación estricta de roles.
+*   **Control de Acceso por Roles (RBAC Seguro y Descentralizado):** Se implementó un layout de seguridad (`app/admin/layout.tsx`) que intercepta y protege herméticamente la sección de administración `/admin` y todas sus sub-rutas. Para cumplir con los máximos estándares de ciberseguridad, **no existen correos electrónicos hardcodeados en el código fuente**. La autorización depende exclusivamente del metadato protegido `role` gestionado externamente y firmado criptográficamente por Clerk (`publicMetadata.role === 'admin'`). Si un usuario sin el rol `admin` (como el operador `delivery+clerktest@iaw.com`) intenta ingresar, es redirigido de inmediato en el servidor a `/dashboard`.
 *   **Protección de Rutas en Producción (proxy.ts):** Siguiendo los estándares nativos de Next.js 16 y Turbopack, la protección de rutas de Clerk se ejecuta de forma centralizada en el archivo de middleware oficial `proxy.ts` a nivel de raíz, validando sesiones de forma óptima en el Edge de Vercel.
 *   **Base de Datos Ricamente Poblada (Seeder):** Para evitar que el evaluador inicie el sistema vacío, el script `prisma/seed.ts` ejecuta primero una **purga total e irreversible de todas las tablas** de la base de datos en cascada para evitar duplicados o errores de integridad, y luego inserta **6 drones con estados variados**, **8 entregas en todas las etapas del ciclo de vida** y **12+ registros telemétricos simulados** en el historial.
 *   **Modal OTP Dinámico por Unidad:** La confirmación de entrega final no utiliza primitivos de navegador (`prompt`), sino una ventana emergente integrada que adopta dinámicamente el color de misión hexadecimal aleatorio generado al vincular el dron, garantizando coherencia de diseño.
