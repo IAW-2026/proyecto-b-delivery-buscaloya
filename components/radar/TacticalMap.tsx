@@ -31,6 +31,8 @@ export function TacticalMap({
   const [mounted, setMounted] = useState(false);
   const [showOtpFor, setShowOtpFor] = useState<any | null>(null);
   const [otpCodeInput, setOtpCodeInput] = useState<string>('');
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpSuccess, setOtpSuccess] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
@@ -370,7 +372,16 @@ export function TacticalMap({
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-4 bg-black p-8 z-50 w-[95%] max-w-lg shadow-[12px_12px_0px]" style={{ borderColor: missionColor, boxShadow: `12px 12px 0px ${missionColor}` } as any}>
               <div className="flex justify-between items-start mb-6">
                 <div className="text-black px-4 py-1 font-bold text-lg uppercase tracking-tighter" style={{ backgroundColor: missionColor }}>Secure_Delivery_Closure</div>
-                <button onClick={() => setShowOtpFor(null)} className="text-white text-xl font-bold hover:text-red-500">[/X]</button>
+                <button 
+                  onClick={() => {
+                    setShowOtpFor(null);
+                    setOtpError(null);
+                    setOtpSuccess(false);
+                  }} 
+                  className="text-white text-xl font-bold hover:text-red-500"
+                >
+                  [/X]
+                </button>
               </div>
 
               <div className="text-white mb-6">
@@ -387,28 +398,50 @@ export function TacticalMap({
                   maxLength={4}
                   placeholder="0000"
                   value={otpCodeInput}
-                  onChange={e => setOtpCodeInput(e.target.value.replace(/\D/g, ''))}
+                  onChange={e => {
+                    setOtpCodeInput(e.target.value.replace(/\D/g, ''));
+                    setOtpError(null);
+                  }}
+                  disabled={isProcessing || otpSuccess}
                   className="w-full bg-zinc-900 border-2 text-white p-4 outline-none font-bold text-center text-3xl tracking-[0.5em] focus:border-white uppercase"
                   style={{ borderColor: missionColor }}
                 />
 
+                {/* NOTIFICACIONES TÁCTICAS DEL ESTADO OTP */}
+                {otpError && (
+                  <div className="border border-red-500 bg-red-950/20 text-red-500 p-3 text-center text-[10px] font-bold uppercase tracking-wider animate-pulse">
+                    [ ! ERROR: {otpError.toUpperCase()} ]
+                  </div>
+                )}
+
+                {otpSuccess && (
+                  <div className="border border-green-500 bg-green-950/20 text-green-500 p-3 text-center text-[10px] font-bold uppercase tracking-wider animate-bounce">
+                    [ ✔ ÉXITO: ENLACE COMPLETADO. CERRANDO SISTEMA... ]
+                  </div>
+                )}
+
                 <button
-                  disabled={isProcessing || otpCodeInput.length !== 4}
+                  disabled={isProcessing || otpCodeInput.length !== 4 || otpSuccess}
                   onClick={async () => {
                     setIsProcessing(true);
+                    setOtpError(null);
                     const res = await updateDeliveryStatus(showOtpFor.id, 'DELIVERED', otpCodeInput);
                     if (res.success) {
-                      setShowOtpFor(null);
-                      setOtpCodeInput('');
+                      setOtpSuccess(true);
+                      setTimeout(() => {
+                        setShowOtpFor(null);
+                        setOtpCodeInput('');
+                        setOtpSuccess(false);
+                      }, 2000); // 2 segundos de visualización de éxito
                     } else {
-                      alert(res.error || 'Código incorrecto');
+                      setOtpError(res.error || 'CÓDIGO OTP INCORRECTO');
                     }
                     setIsProcessing(false);
                   }}
                   className="w-full text-black p-5 font-black text-xl uppercase transition-all disabled:opacity-10 hover:bg-white hover:text-black"
                   style={{ backgroundColor: missionColor }}
                 >
-                  {isProcessing ? 'CONFIRMANDO...' : 'CERRAR_OPERACIÓN'}
+                  {isProcessing ? 'CONFIRMANDO...' : otpSuccess ? 'ENLACE_LIBERADO' : 'CERRAR_OPERACIÓN'}
                 </button>
               </div>
             </div>
