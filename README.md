@@ -12,7 +12,7 @@ La aplicación se encuentra deployada en **Vercel** en un entorno de producción
 
 ## 2. Listado de Usuarios Disponibles para Pruebas
 
-Para facilitar y agilizar la evaluación de las secciones protegidas de la aplicación (`/dashboard` y `/admin`), se han pre-configurado y habilitado las siguientes credenciales de prueba en Clerk (con códigos OTP estáticos en modo de prueba para evitar el bloqueo por dispositivo nuevo):
+Para facilitar y agilizar la evaluación de las secciones protegidas de la aplicación (`/dashboard` y `/admin`), se han pre-configurado y habilitado las siguientes credenciales de prueba en Clerk:
 
 *   **Operador de Radar (Rol Delivery - Acceso Exclusivo a Radar):**
     *   **Email:** `delivery+clerktest@iaw.com`
@@ -24,9 +24,7 @@ Para facilitar y agilizar la evaluación de las secciones protegidas de la aplic
     *   *Permisos:* Acceso irrestricto a la consola de Radar (`/dashboard`) y al panel de administración y couriers (`/admin`).
     *   *Configuración de Seguridad:* Para evitar malas prácticas de ciberseguridad, **no hay correos hardcodeados en el código**. En su lugar, se configuró el metadato externo y protegido de Clerk `{ "role": "admin" }` para este usuario.
 
-*(Nota 1: Si Clerk solicita un código de verificación al iniciar sesión debido a detección de nuevo dispositivo, puede ingresar el código estático de prueba **`424242`** para acceder de inmediato sin depender de un buzón real).*
-
-*(Nota 2: Para asignar el rol de administrador a cualquier usuario en Clerk, ingrese a su Dashboard de Clerk -> **Users** -> seleccione el usuario -> busque **Metadata** -> edite **Public Metadata** con el JSON `{ "role": "admin" }`).*
+*(Nota: Para asignar el rol de administrador a cualquier usuario en Clerk, ingrese a su Dashboard de Clerk -> **Users** -> seleccione el usuario -> busque **Metadata** -> edite **Public Metadata** con el JSON `{ "role": "admin" }`).*
 
 ---
 
