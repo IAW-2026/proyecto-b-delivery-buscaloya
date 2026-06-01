@@ -112,6 +112,7 @@ async function main() {
       order_id: 'ORD-9821',
       status: DeliveryStatus.ACCEPTED_FOR_ASSIGNMENT,
       color_code: '#FF007F',
+      confirmation_code: '1234',
       snapshot: {
         create: {
           seller_id: 'SEL-001',
@@ -143,6 +144,7 @@ async function main() {
       order_id: 'ORD-4402',
       status: DeliveryStatus.ACCEPTED_FOR_ASSIGNMENT,
       color_code: '#FF5E00',
+      confirmation_code: '5678',
       snapshot: {
         create: {
           seller_id: 'SEL-002',
@@ -174,6 +176,7 @@ async function main() {
       order_id: 'ORD-8711',
       status: DeliveryStatus.COURIER_ASSIGNED,
       color_code: '#10B981',
+      confirmation_code: '2468',
       snapshot: {
         create: {
           seller_id: 'SEL-003',
@@ -212,6 +215,7 @@ async function main() {
       order_id: 'ORD-5192',
       status: DeliveryStatus.PICKED_UP,
       color_code: '#EAB308',
+      confirmation_code: '1357',
       snapshot: {
         create: {
           seller_id: 'SEL-004',
