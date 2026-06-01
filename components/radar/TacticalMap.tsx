@@ -10,6 +10,7 @@
  *   - Llama a Server Actions de forma asíncrona para avanzar el viaje y actualizar los mocks en producción.
  */
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { assignCourier, updateDeliveryStatus } from './actions';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import mapaBblanca from '@/app/mapa-bblanca.png';
@@ -23,6 +24,7 @@ export function TacticalMap({
   activeMissions: any[],
   initialPending?: any[]
 }) {
+  const router = useRouter();
   const [couriers, setCouriers] = useState<any[]>(initialCouriers);
   const [pendingDeliveries, setPendingDeliveries] = useState<any[]>(initialPending);
   const [selectedCourierId, setSelectedCourierId] = useState<string>('');
@@ -33,6 +35,11 @@ export function TacticalMap({
   const [otpCodeInput, setOtpCodeInput] = useState<string>('');
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpSuccess, setOtpSuccess] = useState<boolean>(false);
+
+  // Sincronizar estado local de couriers cuando cambian los props del servidor
+  useEffect(() => {
+    setCouriers(initialCouriers);
+  }, [initialCouriers]);
 
   useEffect(() => {
     setMounted(true);
@@ -77,6 +84,7 @@ export function TacticalMap({
       setPendingDeliveries(p => p.filter(d => d.id !== deliveryId));
       setShowAssignmentFor(null);
       setSelectedCourierId('');
+      router.refresh(); // Actualizar datos en servidor
 
       // SECUENCIA DE LANZAMIENTO: Esperar 1 segundo para que carguen los colores, luego volar.
       setTimeout(() => {
@@ -114,6 +122,8 @@ export function TacticalMap({
       setIsProcessing(false);
       return;
     }
+
+    router.refresh(); // Actualizar datos en servidor
 
     if (newStatus === 'OUT_FOR_DELIVERY' && mission?.snapshot) {
       // MOTOR DE VUELO FASE 2: Volar a destino
@@ -428,6 +438,7 @@ export function TacticalMap({
                     const res = await updateDeliveryStatus(showOtpFor.id, 'DELIVERED', otpCodeInput);
                     if (res.success) {
                       setOtpSuccess(true);
+                      router.refresh(); // Forzar actualización de servidor para liberar al dron y misiones
                       setTimeout(() => {
                         setShowOtpFor(null);
                         setOtpCodeInput('');
