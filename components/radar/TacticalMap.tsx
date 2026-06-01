@@ -36,11 +36,6 @@ export function TacticalMap({
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpSuccess, setOtpSuccess] = useState<boolean>(false);
 
-  // Sincronizar estado local de couriers cuando cambian los props del servidor
-  useEffect(() => {
-    setCouriers(initialCouriers);
-  }, [initialCouriers]);
-
   useEffect(() => {
     setMounted(true);
     const interval = setInterval(async () => {
@@ -438,6 +433,23 @@ export function TacticalMap({
                     const res = await updateDeliveryStatus(showOtpFor.id, 'DELIVERED', otpCodeInput);
                     if (res.success) {
                       setOtpSuccess(true);
+                      
+                      // Actualizar de forma inmediata el estado local del dron en el cliente para liberarlo
+                      const courierId = showOtpFor.assignments?.[0]?.courier_id;
+                      if (courierId) {
+                        setCouriers(prev => prev.map(c => {
+                          if (c.id === courierId) {
+                            return {
+                              ...c,
+                              status: 'AVAILABLE',
+                              last_x: showOtpFor.snapshot?.buyer_x ?? c.last_x,
+                              last_y: showOtpFor.snapshot?.buyer_y ?? c.last_y
+                            };
+                          }
+                          return c;
+                        }));
+                      }
+
                       router.refresh(); // Forzar actualización de servidor para liberar al dron y misiones
                       setTimeout(() => {
                         setShowOtpFor(null);
