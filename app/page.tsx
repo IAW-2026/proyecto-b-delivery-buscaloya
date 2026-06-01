@@ -6,10 +6,18 @@
  *   - Enlaces rápidos para iniciar la operación (Dashboard / Radar) y para el Panel de Administración (Admin Terminal).
  */
 import Link from 'next/link';
+import { UserButton } from '@clerk/nextjs';
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-8 relative overflow-hidden">
+      
+      {/* Botón de Perfil de Clerk en la esquina superior izquierda */}
+      <div className="absolute top-6 left-6 z-50 flex items-center gap-3 bg-black border-2 border-brand-neon p-2 shadow-[4px_4px_0px_#00FF00]">
+        <UserButton />
+        <span className="text-[9px] font-mono text-brand-neon uppercase tracking-wider font-bold">PROFILE // LINK</span>
+      </div>
+
       
       {/* Background decoration */}
       <div 
