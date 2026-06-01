@@ -1,62 +1,66 @@
-# Ecosistema BuscaloYa // Módulo de Delivery (Etapa 2)
-
-Aplicación logística autónoma de gestión de entregas y control táctico de flota de drones, construida para la **Etapa 2 (Implementación Individual)**.
-
-## 🚀 Acceso al Sistema
-
-*   **URL de Producción (Vercel):** [https://proyecto-b-delivery-buscaloya.vercel.app](https://proyecto-b-delivery-buscaloya.vercel.app)
-*   **Acceso / Autenticación:** 
-    *   La aplicación utiliza **Clerk** en modo *sandbox* compartido.
-    *   Puedes iniciar sesión registrándote con cualquier correo de pruebas en `/sign-up` o ingresando a través del flujo de `/sign-in`.
+# Módulo de Delivery // Ecosistema BuscaloYa (Etapa 2)
 
 ---
 
-## 🛠️ Stack Tecnológico Implementado
+## 1. Enlace al Deploy de Producción
 
-| Capa | Tecnología | Implementación en este Módulo |
-| :--- | :--- | :--- |
-| **Frontend / Full-stack** | **Next.js 16 (App Router)** | Páginas dinámicas, componentes optimizados y API enrutada bajo `/app` y `/components`. |
-| **Estilos** | **Tailwind CSS v4** | Estética brutalista y cyberpunk retro-futurista de alta fidelidad visual. |
-| **Base de Datos** | **PostgreSQL (Supabase)** | Base de datos relacional aislada y persistente en la nube. |
-| **ORM** | **Prisma** | Modelado relacional atómico, migraciones y tipados automáticos con cliente de producción. |
-| **Autenticación** | **Clerk** | Inicio de sesión seguro y roles a nivel de operador del panel táctico. |
-| **Despliegue** | **Vercel** | Instancia en producción integrada con GitHub, optimizada con compilación en Turbopack. |
+La aplicación se encuentra deployada en **Vercel** en un entorno de producción optimizado con conexión persistente a la base de datos y Clerk:
+
+🔗 **URL de Producción:** [https://proyecto-b-delivery-buscaloya.vercel.app](https://proyecto-b-delivery-buscaloya.vercel.app)
 
 ---
 
-## 📋 Lista de Requisitos Cumplidos (Checklist de la Consigna)
+## 2. Listado de Usuarios Disponibles para Pruebas
 
-*   **[✓] Páginas y Componentes Reutilizables en Next.js:** Interfaz construida con layouts globales, barras de navegación reactivas y componentes semánticos reutilizables.
-*   **[✓] API Propia:** Exposición de endpoints REST documentados y listos para la integración del ecosistema en la Etapa 3:
-    *   `POST /api/delivery-requests`: Recepción y creación de nuevas misiones de envío (usado por la App de Ventas).
-    *   `GET /api/deliveries/[id]/tracking`: Consulta de telemetría de dron (usado por la App de Clientes).
-    *   `POST /api/deliveries/[id]/cancel`: Cancelación atómica del pedido.
-    *   `GET /api/deliveries/pending`: Listado en tiempo real de misiones en espera.
-    *   `GET /api/logs`: Terminal de auditoría del sistema (**Traveler's Log**).
-*   **[✓] Base de Datos PostgreSQL Propia:** Base de datos persistente en Supabase que almacena el historial de drones (`Courier`), misiones (`Delivery`), auditorías de tráfico (`TravelerLog`) y telemetría de vuelo (`DeliveryTrackingPoint`).
-*   **[✓] Autenticación Clerk:** Flujo completo de login y registro. Se protegen las rutas de administración `/admin` y el `/dashboard` mediante el middleware oficial de Clerk.
-*   **[✓] Panel de Administración:**
-    *   Ubicado en `/admin`, permite monitorear y buscar envíos, así como gestionar la flota aérea de drones en `/admin/couriers` (crear, editar y dar de baja unidades).
-*   **[✓] Búsqueda y Paginación:** Búsqueda en tiempo real de unidades y envíos, implementada con parámetros limpios en la URL (`?search=...&page=...`) para garantizar la persistencia del estado en el navegador.
-*   **[✓] Manejo de Errores:** Control de excepciones mediante bloques `try/catch` globales, páginas 404 nativas de Next.js (`notFound()`) y control de fallos en llamadas de red.
-*   **[✓] Validación de Formularios en Servidor:** Las Server Actions del panel de couriers validan estrictamente las entradas del usuario (nombres, teléfonos, tipos de vehículo y vinculación de operadores) antes de persistir en PostgreSQL.
-*   **[✓] Consumo de API Externa de Valor:** Integración real (sin embeds) con el servicio de meteorología **Open-Meteo API** en el backend del `/dashboard`. Consulta las coordenadas tácticas en tiempo real (`latitude=-38.7196` y `longitude=-62.2724`) para mostrar telemetría atmosférica de velocidad de viento y temperatura antes del despegue de los drones.
-*   **[✓] Aislamiento Completo y Mocks:** Todos los eventos externos de comunicación con otras webapps están implementados mediante interceptores de Mock (`mockNotifyOrderStatusChange` y `mockNotifyPaymentClose` en `lib/mock-external.ts`).
+Para facilitar y agilizar la evaluación de las secciones protegidas de la aplicación (`/dashboard` y `/admin`), se han pre-configurado y habilitado las siguientes credenciales en Clerk con el formato reglamentario:
+
+*   **Operador de Control / Administrador de Drones:**
+    *   **Email:** `operator+clerktest@iaw.com`
+    *   **Contraseña:** `iawuser#`
+*   **Administrador de Infraestructura:**
+    *   **Email:** `admin+clerktest@iaw.com`
+    *   **Contraseña:** `iawuser#`
+
+*(Nota: En caso de que se requiera probar registros adicionales, la aplicación permite dar de alta nuevos usuarios en `/sign-up` siempre que cumplan con el formato de correo `<rol>+clerktest@iaw.com` y contraseña `iawuser#` exigidos por la cátedra).*
 
 ---
 
-## ⚙️ Configuración y Variables de Entorno
+## 3. Instrucciones para Utilizar y Evaluar la Aplicación
 
-El archivo `.env.example` en la raíz contiene las siguientes variables requeridas para inicializar el proyecto:
+Para recorrer y evaluar adecuadamente todas las funcionalidades del sistema táctico y logística, siga los siguientes pasos ordenados:
 
-```env
-# URL de conexión pooler de base de datos para Prisma
-DATABASE_URL="tu_url_pooler_supabase"
+1.  **Inicio de Sesión:** Ingrese a la Landing Page en `/` y haga clic en **Iniciar Operación** para ser redirigido al portal seguro de Clerk. Inicie sesión con la cuenta de pruebas (`operator+clerktest@iaw.com` / `iawuser#`).
+2.  **Consola Táctica (Radar):** Tras autenticarse, accederá a la Consola de Control (`/dashboard`). Verá el mapa táctico digital de la ciudad de Bahía Blanca con datos cargados (drones, objetivos y líneas de navegación activas).
+    *   *Navegación del Mapa:* Use la rueda del mouse o gestos táctiles para hacer Zoom, y mantenga presionado el botón derecho del mouse para desplazar la vista (Pan).
+3.  **Simular Entrada de Pedido:** Haga clic en el botón flotante naranja **[ CONTROL CENTER ]** en la esquina inferior derecha para desplegar la Cyber Deck. En la pestaña `SIMULATOR`, haga clic en el botón **DISPARAR PEDIDO [MOCK]**. Esto simulará que la aplicación de Ventas envía una orden para ser despachada.
+    *   *Resultado:* Aparecerá instantáneamente un orbe rosa parpadeante en el mapa (en el local del vendedor) y la orden se agregará a la lista de **Pending_Payloads** en el panel de la derecha.
+4.  **Asignación de Drones:** Haga clic en el orbe rosa del mapa o en la tarjeta de la orden pendiente de la derecha. Se desplegará la ventana emergente brutalista de vinculación. Seleccione un dron disponible (en color verde en el panel de telemetría de abajo) y haga clic en **ENGAGE_LINK**.
+    *   *Resultado:* El dron cambiará su estado a `ASSIGNED` y se desplazará en tiempo real en el mapa hacia las coordenadas del local de comida en una secuencia suave de vuelo.
+5.  **Simular Telemetría:** Haga clic en **DISPARAR TELEMETRÍA [MOCK]** en el panel flotante para simular las actualizaciones de posición GPS de los drones activos. Esto actualizará los logs del sistema.
+6.  **Flujo y Estados de Entrega (Misiones Activas):** En el panel derecho de la consola táctica, localice la orden vinculada:
+    *   Haga clic en **Payload_Picked** para confirmar que la mercancía fue recogida (el estado avanza a `PICKED_UP`).
+    *   Haga clic en **In_Transit** para ordenar al dron volar hacia el cliente (el estado avanza a `OUT_FOR_DELIVERY` y se trazará una línea discontinua de vuelo hacia el destino).
+7.  **Confirmación OTP:** Cuando el dron llegue al comprador, el botón cambiará a **Confirm_Delivery**. Haga clic en él para abrir la ventana de seguridad emergente.
+    *   *Cierre de Misión:* El código OTP de 4 dígitos asignado al cliente se muestra de forma conveniente en la tarjeta de la orden para facilitar la corrección (`CÓDIGO OTP (CLIENTE): XXXX`). Ingréselo en la casilla del modal y haga clic en **CERRAR OPERACIÓN**. La orden cambiará a `DELIVERED`, el dron volverá a estar disponible y se registrará un evento de auditoría.
+8.  **Inspeccionar Tráfico (Traveler's Log):** En la Cyber Deck flotante, vaya a la pestaña `TRAFFIC LOGS`. Podrá navegar por las peticiones entrantes y salientes de la API en tiempo real con un coloreado visual interactivo de los JSON.
+9.  **Administración y Flota:** Haga clic en **Admin Terminal** en la cabecera (o vaya a `/admin`) para ingresar al buscador paginado de telemetría histórica de envíos y al ABM de drones en **Gestión de Flota** (`/admin/couriers`), donde podrá crear, editar y dar de baja drones de forma segura.
 
-# URL de conexión directa para migraciones de base de datos
-DIRECT_URL="tu_url_directa_supabase"
+---
 
-# Credenciales de autenticación compartidas de Clerk
-CLERK_SECRET_KEY="tu_clave_secreta_clerk"
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="tu_clave_publica_clerk"
-```
+## 4. Breve Descripción del Proyecto
+
+El **Módulo de Delivery** del ecosistema *BuscaloYa* es una consola centralizada de despacho táctico y telemetría de drones de carga, diseñada bajo una robusta y llamativa estética brutalista y cyberpunk. Su función principal es permitir a los operadores supervisar, vincular y guiar de forma segura las entregas aéreas sobre el plano urbano de la ciudad de Bahía Blanca, manteniendo una visualización responsiva e interactiva de todos los actores en el mapa con independencia de la resolución del monitor del operador.
+
+El backend del sistema está construido sobre **Next.js (App Router)** e implementa **Prisma ORM** como motor de interacción atómica y transaccional con una base de datos relacional **PostgreSQL (Supabase)** en la nube. La capa de presentación aprovecha las nuevas capacidades de **Tailwind CSS v4** para forjar una UI cohesiva sin bordes redondeados, utilizando colores fluorescentes de alta advertencia y tipografías monoespaciadas de grado industrial que emulan monitores CRT antiguos con barridos analógicos de fósforo.
+
+Para garantizar la seguridad, las secciones críticas de control de flota y logs de auditoría se encuentran resguardadas de accesos no autorizados mediante la integración del middleware de **Clerk** en el servidor, restringiendo accesos a operadores debidamente autenticados en el ecosistema. Adicionalmente, el módulo incorpora esquemas estrictos de validación con **Zod** y expone APIs REST robustas diseñadas para enlazarse de forma transparente con los módulos de Ventas y Compras en las siguientes etapas del proyecto.
+
+---
+
+## 5. Notas y Comentarios para la Corrección
+
+*   **Protección de Rutas en Vercel (middleware.ts):** A diferencia de configuraciones locales personalizadas con archivos como `proxy.ts`, se ha configurado el archivo estándar `middleware.ts` en la raíz del proyecto para asegurar que Next.js compile y active el filtro de Clerk en los servidores edge de Vercel, protegiendo herméticamente `/dashboard` y `/admin` de usuarios no firmados.
+*   **Base de Datos Ricamente Poblada (Seeder):** Para evitar que el evaluador inicie el sistema vacío, el script `prisma/seed.ts` ejecuta primero una **purga total e irreversible de todas las tablas** de la base de datos en cascada para evitar duplicados o errores de integridad, y luego inserta **6 drones con estados variados**, **8 entregas en todas las etapas del ciclo de vida** y **12+ registros telemétricos simulados** en el historial.
+*   **Modal OTP Dinámico por Unidad:** La confirmación de entrega final no utiliza primitivos de navegador (`prompt`), sino una ventana emergente integrada que adopta dinámicamente el color de misión hexadecimal aleatorio generado al vincular el dron, garantizando coherencia de diseño.
+*   **Simulación de Sensores de Drones:** El panel táctico calcula en tiempo real métricas de vuelo para los drones activos: altitud variable en rampa (0m en despegue, 120m en crucero y 15m en aproximación), descarga de batería basada en el tiempo y pequeñas fluctuaciones realistas en la potencia de señal RSSI (`dBm`) y la conexión de satélites GPS.
+*   **APIs REST Estandarizadas:** Las APIs de tracking y solicitudes validan rigurosamente que los elementos estén mapeados en coordenadas relativas (0 a 10000) e implementan mocks salientes en `lib/mock-external.ts` que registran en la bitácora TravelerLog toda la comunicación externa.

@@ -14,12 +14,12 @@ import { assignCourier, updateDeliveryStatus } from './actions';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import mapaBblanca from '@/app/mapa-bblanca.png';
 
-export function TacticalMap({ 
-  initialCouriers, 
-  activeMissions, 
-  initialPending = [] 
-}: { 
-  initialCouriers: any[], 
+export function TacticalMap({
+  initialCouriers,
+  activeMissions,
+  initialPending = []
+}: {
+  initialCouriers: any[],
   activeMissions: any[],
   initialPending?: any[]
 }) {
@@ -67,7 +67,7 @@ export function TacticalMap({
   const handleAssign = async (deliveryId: string) => {
     if (!selectedCourierId) return alert('Seleccione un dron');
     setIsProcessing(true);
-    
+
     const targetOrder = pendingDeliveries.find(d => d.id === deliveryId);
     const res = await assignCourier(deliveryId, selectedCourierId);
 
@@ -81,9 +81,9 @@ export function TacticalMap({
         if (targetOrder?.snapshot) {
           setCouriers(prev => prev.map(c => {
             if (c.id === selectedCourierId) {
-              return { 
-                ...c, 
-                last_x: targetOrder.snapshot.seller_x, 
+              return {
+                ...c,
+                last_x: targetOrder.snapshot.seller_x,
                 last_y: targetOrder.snapshot.seller_y,
                 status: 'ASSIGNED'
               };
@@ -92,7 +92,7 @@ export function TacticalMap({
           }));
         }
       }, 1000); // 1 Segundo de preparación de motores
-      
+
     } else {
       alert(res.error || 'Error en asignación');
     }
@@ -101,12 +101,12 @@ export function TacticalMap({
 
   const handleStatusChange = async (deliveryId: string, newStatus: any) => {
     setIsProcessing(true);
-    
+
     // Buscar la misión para obtener coordenadas de destino
     const mission = activeMissions.find(m => m.id === deliveryId);
 
     const res = await updateDeliveryStatus(deliveryId, newStatus);
-    
+
     if (!res.success) {
       alert(res.error || 'Error al actualizar el estado');
       setIsProcessing(false);
@@ -118,10 +118,10 @@ export function TacticalMap({
       const courierId = mission.assignments?.[0]?.courier_id;
       setCouriers(prev => prev.map(c => {
         if (c.id === courierId) {
-          return { 
-            ...c, 
-            last_x: mission.snapshot.buyer_x, 
-            last_y: mission.snapshot.buyer_y 
+          return {
+            ...c,
+            last_x: mission.snapshot.buyer_x,
+            last_y: mission.snapshot.buyer_y
           };
         }
         return c;
@@ -137,9 +137,9 @@ export function TacticalMap({
     <div className="flex flex-col md:flex-row h-full border-4 border-[#FF007F] bg-black text-[#FF007F] font-mono overflow-hidden">
 
       {/* MAPA (Izquierda) */}
-      <div className="flex-[3] relative border-r-4 border-[#FF007F] bg-zinc-950 overflow-hidden select-none" 
-           onContextMenu={(e) => e.preventDefault()}>
-        
+      <div className="flex-[3] relative border-r-4 border-[#FF007F] bg-zinc-950 overflow-hidden select-none"
+        onContextMenu={(e) => e.preventDefault()}>
+
         <TransformWrapper
           initialScale={1}
           minScale={1}
@@ -169,7 +169,7 @@ export function TacticalMap({
                 {activeMissions.map(m => {
                   const courierId = m.assignments?.[0]?.courier_id;
                   const courier = couriers.find(c => c.id === courierId);
-                  
+
                   // La línea solo aparece cuando ya recogió pero aún no sale (PICKED_UP)
                   if (m.status !== 'PICKED_UP' || !courier || m.snapshot?.buyer_x === undefined) return null;
 
@@ -181,11 +181,11 @@ export function TacticalMap({
 
                   return (
                     <g key={`nav-line-${m.id}`}>
-                      <line 
-                        x1={`${x1}%`} y1={`${y1}%`} 
-                        x2={`${x2}%`} y2={`${y2}%`} 
-                        stroke={missionColor} 
-                        strokeWidth="2" 
+                      <line
+                        x1={`${x1}%`} y1={`${y1}%`}
+                        x2={`${x2}%`} y2={`${y2}%`}
+                        stroke={missionColor}
+                        strokeWidth="2"
                         strokeDasharray="8 4"
                         className="animate-[dash_20s_linear_infinite]"
                         style={{ opacity: 0.6 }}
@@ -201,7 +201,7 @@ export function TacticalMap({
                 const posX = p.snapshot.seller_x / 100;
                 const posY = p.snapshot.seller_y / 100;
                 return (
-                  <div 
+                  <div
                     key={p.id}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -213,7 +213,7 @@ export function TacticalMap({
                     <div className="relative flex flex-col items-center">
                       <div className="h-5 w-5 rounded-full bg-[#FF007F] animate-ping absolute"></div>
                       <div className="h-5 w-5 rounded-full bg-[#FF007F] border-2 border-white relative z-10"></div>
-                      
+
                       {/* ID Etiqueta Permanente */}
                       <div className="mt-1.5 bg-black border-2 border-[#FF007F] px-1.5 py-0.5 whitespace-nowrap z-20 shadow-[4px_4px_0px_rgba(0,0,0,0.5)]">
                         <div className="text-[9px] text-white font-black leading-none uppercase">
@@ -232,9 +232,9 @@ export function TacticalMap({
                 const posX = m.snapshot.seller_x / 100;
                 const posY = m.snapshot.seller_y / 100;
                 const missionColor = m.color_code || '#FF007F';
-                
+
                 return (
-                  <div 
+                  <div
                     key={`active-order-${m.id}`}
                     className="absolute z-20 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                     style={{ left: `${posX}%`, top: `${posY}%` }}
@@ -254,13 +254,13 @@ export function TacticalMap({
               {/* ORBES DE DESTINO (Ubicación del Comprador) */}
               {activeMissions.map(m => {
                 if (!['PICKED_UP', 'OUT_FOR_DELIVERY'].includes(m.status) || m.snapshot?.buyer_x === undefined) return null;
-                
+
                 const posX = m.snapshot.buyer_x / 100;
                 const posY = m.snapshot.buyer_y / 100;
                 const missionColor = m.color_code || '#FF007F';
-                
+
                 return (
-                  <div 
+                  <div
                     key={`target-${m.id}`}
                     className="absolute z-20 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                     style={{ left: `${posX}%`, top: `${posY}%` }}
@@ -284,7 +284,7 @@ export function TacticalMap({
                 if (c.last_x === undefined) return null;
                 const posX = c.last_x / 100;
                 const posY = c.last_y / 100;
-                
+
                 // Buscar si este courier tiene una misión activa
                 const activeMission = activeMissions.find(m => m.assignments?.[0]?.courier_id === c.id);
                 const isAssigned = !!activeMission;
@@ -294,11 +294,11 @@ export function TacticalMap({
                 if (c.status === 'OFFLINE') return null;
 
                 return (
-                  <div 
+                  <div
                     key={c.id}
                     className="absolute z-30 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                    style={{ 
-                      left: `${posX}%`, 
+                    style={{
+                      left: `${posX}%`,
                       top: `${posY}%`,
                       transition: 'all 5s linear' // MOTOR DE VUELO
                     }}
@@ -324,7 +324,7 @@ export function TacticalMap({
               <div className="bg-[#FF007F] text-black px-4 py-1 font-bold text-lg uppercase tracking-tighter">Mission_Engagement</div>
               <button onClick={() => setShowAssignmentFor(null)} className="text-white text-xl font-bold hover:text-[#FF007F]">[/X]</button>
             </div>
-            
+
             <div className="text-white mb-8 grid grid-cols-2 gap-4">
               <div className="border border-zinc-800 p-3 bg-zinc-950">
                 <div className="text-[10px] text-[#FF007F] uppercase mb-1">Origin</div>
@@ -382,7 +382,7 @@ export function TacticalMap({
 
               <div className="flex flex-col gap-4">
                 <label className="text-[10px] uppercase tracking-widest font-bold" style={{ color: missionColor }}>Ingrese_Código_Confirmación_OTP:</label>
-                <input 
+                <input
                   type="text"
                   maxLength={4}
                   placeholder="0000"
@@ -391,7 +391,7 @@ export function TacticalMap({
                   className="w-full bg-zinc-900 border-2 text-white p-4 outline-none font-bold text-center text-3xl tracking-[0.5em] focus:border-white uppercase"
                   style={{ borderColor: missionColor }}
                 />
-                
+
                 <button
                   disabled={isProcessing || otpCodeInput.length !== 4}
                   onClick={async () => {
@@ -414,18 +414,18 @@ export function TacticalMap({
             </div>
           );
         })()}
-        
+
         {/* Controles Visuales */}
         <div className="absolute bottom-4 left-4 z-20 flex gap-2">
-            <div className="bg-black border border-[#FF007F] px-2 py-1 text-[8px] text-[#FF007F]">
-                [SCROLL] ZOOM | [R-CLICK] PAN
-            </div>
+          <div className="bg-black border border-[#FF007F] px-2 py-1 text-[8px] text-[#FF007F]">
+            [SCROLL] ZOOM | [R-CLICK] PAN
+          </div>
         </div>
       </div>
 
       {/* PANEL DE DATOS (Derecha) */}
       <div className="flex-1 flex flex-col bg-black overflow-hidden min-w-[320px]">
-        
+
         {/* Órdenes en Espera */}
         <section className="flex-1 flex flex-col border-b-2 border-[#FF007F] overflow-hidden">
           <div className="bg-[#FF007F] text-black p-2 text-[10px] font-black uppercase tracking-[0.2em] text-center">
@@ -433,7 +433,7 @@ export function TacticalMap({
           </div>
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 custom-scrollbar">
             {pendingDeliveries.map(p => (
-              <button 
+              <button
                 key={p.id}
                 onClick={() => setShowAssignmentFor(p)}
                 className={`text-left p-4 border-2 transition-all ${showAssignmentFor?.id === p.id ? 'border-white bg-[#FF007F]/20' : 'border-zinc-800 hover:border-[#FF007F] bg-zinc-950'}`}
@@ -444,7 +444,7 @@ export function TacticalMap({
                     {mounted ? new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--:--'}
                   </span>
                 </div>
-                
+
                 <div className="flex flex-col gap-1">
                   <div className="text-[10px] text-zinc-400 uppercase truncate">
                     <span className="text-[#FF007F] mr-1">FROM:</span> {p.snapshot?.seller_name}
@@ -481,15 +481,15 @@ export function TacticalMap({
                     <div className="text-white font-black text-xs">{m.order_id}</div>
                     <div className="text-[8px] text-black px-2 py-0.5 font-bold uppercase" style={{ backgroundColor: missionColor }}>{m.status.replace(/_/g, ' ')}</div>
                   </div>
-                  
+
                   <div className="flex gap-1 mb-3">
                     {[25, 50, 75, 100].map((step) => (
-                      <div 
-                        key={step} 
+                      <div
+                        key={step}
                         className="h-1.5 flex-1 border"
-                        style={{ 
-                          backgroundColor: progress >= step ? missionColor : '#18181b', 
-                          borderColor: progress >= step ? missionColor : '#27272a' 
+                        style={{
+                          backgroundColor: progress >= step ? missionColor : '#18181b',
+                          borderColor: progress >= step ? missionColor : '#27272a'
                         }}
                       >
                         {progress === step && <div className="h-full w-full bg-white opacity-40 animate-pulse"></div>}
@@ -509,8 +509,8 @@ export function TacticalMap({
 
                   <div className="grid grid-cols-1 gap-2">
                     {m.status === 'COURIER_ASSIGNED' && (
-                      <button 
-                        onClick={() => handleStatusChange(m.id, 'PICKED_UP')} 
+                      <button
+                        onClick={() => handleStatusChange(m.id, 'PICKED_UP')}
                         className="border-2 font-bold py-2 text-[10px] transition-all uppercase hover:bg-white hover:text-black"
                         style={{ borderColor: missionColor, color: missionColor }}
                       >
@@ -518,8 +518,8 @@ export function TacticalMap({
                       </button>
                     )}
                     {m.status === 'PICKED_UP' && (
-                      <button 
-                        onClick={() => handleStatusChange(m.id, 'OUT_FOR_DELIVERY')} 
+                      <button
+                        onClick={() => handleStatusChange(m.id, 'OUT_FOR_DELIVERY')}
                         className="border-2 font-bold py-2 text-[10px] transition-all uppercase hover:bg-white hover:text-black"
                         style={{ borderColor: missionColor, color: missionColor }}
                       >
@@ -527,11 +527,11 @@ export function TacticalMap({
                       </button>
                     )}
                     {m.status === 'OUT_FOR_DELIVERY' && (
-                      <button 
+                      <button
                         onClick={() => {
                           setShowOtpFor(m);
                           setOtpCodeInput('');
-                        }} 
+                        }}
                         className="border-2 font-bold py-2 text-[10px] transition-all uppercase hover:bg-white hover:text-black"
                         style={{ borderColor: missionColor, color: missionColor }}
                       >
