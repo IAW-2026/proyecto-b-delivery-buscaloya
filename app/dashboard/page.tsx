@@ -28,13 +28,27 @@ export default async function DashboardPage() {
   const weather = await getWeather();
   
   const initialCouriers = await prisma.courier.findMany({
-    where: { clerk_id: user?.id }
+    where: {
+      OR: [
+        { clerk_id: user?.id },
+        { clerk_id: null }
+      ]
+    }
   });
 
   const activeMissions = await prisma.delivery.findMany({
     where: {
       status: { in: ['COURIER_ASSIGNED', 'PICKED_UP', 'OUT_FOR_DELIVERY'] },
-      assignments: { some: { courier: { clerk_id: user?.id } } }
+      assignments: {
+        some: {
+          courier: {
+            OR: [
+              { clerk_id: user?.id },
+              { clerk_id: null }
+            ]
+          }
+        }
+      }
     },
     include: {
       snapshot: true,
