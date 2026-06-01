@@ -2,6 +2,37 @@ import { DeliveryStatus, AvailabilityStatus, AssignmentStatus, EventSource, Trac
 import 'dotenv/config'
 import { prisma } from '../lib/prisma'
 
+// Función auxiliar para buscar el Clerk ID del usuario ficticio consultando la API de Clerk
+async function getClerkUserIdByEmail(email: string): Promise<string | null> {
+  const secretKey = process.env.CLERK_SECRET_KEY;
+  if (!secretKey) {
+    console.warn('⚠️ No se encontró CLERK_SECRET_KEY en el entorno.');
+    return null;
+  }
+
+  try {
+    const res = await fetch(`https://api.clerk.com/v1/users?email_address=${encodeURIComponent(email)}`, {
+      headers: {
+        'Authorization': `Bearer ${secretKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (res.ok) {
+      const users = await res.json() as any[];
+      if (users && users.length > 0) {
+        console.log(`✔ Encontrado Clerk ID para ${email}: ${users[0].id}`);
+        return users[0].id;
+      }
+    } else {
+      console.warn(`⚠️ Error al consultar Clerk API para ${email}: ${res.statusText}`);
+    }
+  } catch (e) {
+    console.error(`❌ Error al conectar con Clerk API para ${email}:`, e);
+  }
+  return null;
+}
+
 async function main() {
   console.log('==================================================')
   console.log('⚡ INICIANDO PURGADO DE BASE DE DATOS SUPABASE...')
@@ -30,11 +61,21 @@ async function main() {
   console.log(`✔ Flota de drones (Couriers) eliminada: ${couriersCount.count} registros eliminados.`)
 
   console.log('\n==================================================')
+  console.log('🔍 CONSULTANDO CREDENCIALES DE PRUEBAS EN CLERK...')
+  console.log('==================================================')
+
+  // Buscar los Clerk IDs reales de los usuarios de pruebas
+  const deliveryClerkId = await getClerkUserIdByEmail('delivery+clerktest@iaw.com');
+  const adminClerkId = await getClerkUserIdByEmail('admin+clerktest@iaw.com');
+
+  console.log('\n==================================================')
   console.log('🚀 INICIANDO INSERCIÓN DE DATOS TÁCTICOS MOCK...')
   console.log('==================================================')
 
   // 1. Crear la Flota de 6 Couriers (Drones / Vehículos)
-  console.log('🛰 Creando flota de drones y couriers...')
+  console.log('🛰 Creando flota de drones y couriers enlazados a Clerk...')
+  
+  // Drones asignados al Operador de Delivery
   const c1 = await prisma.courier.create({
     data: {
       name: 'DRON FENIX-01',
@@ -43,6 +84,7 @@ async function main() {
       status: AvailabilityStatus.AVAILABLE,
       last_x: 2500,
       last_y: 2800,
+      clerk_id: deliveryClerkId || null,
     }
   })
 
@@ -54,6 +96,7 @@ async function main() {
       status: AvailabilityStatus.ASSIGNED,
       last_x: 7500,
       last_y: 4200,
+      clerk_id: deliveryClerkId || null,
     }
   })
 
@@ -65,9 +108,11 @@ async function main() {
       status: AvailabilityStatus.ASSIGNED,
       last_x: 5000,
       last_y: 5000,
+      clerk_id: deliveryClerkId || null,
     }
   })
 
+  // Courier sin dueño (disponible libremente)
   const c4 = await prisma.courier.create({
     data: {
       name: 'BICI ECO-04',
@@ -76,9 +121,11 @@ async function main() {
       status: AvailabilityStatus.OFFLINE,
       last_x: 4800,
       last_y: 6100,
+      clerk_id: null,
     }
   })
 
+  // Drones asignados al Administrador de Flota
   const c5 = await prisma.courier.create({
     data: {
       name: 'DRON RAPTOR-05',
@@ -87,6 +134,7 @@ async function main() {
       status: AvailabilityStatus.OFFLINE,
       last_x: 1200,
       last_y: 8900,
+      clerk_id: adminClerkId || null,
     }
   })
 
@@ -98,6 +146,7 @@ async function main() {
       status: AvailabilityStatus.AVAILABLE,
       last_x: 8200,
       last_y: 1900,
+      clerk_id: adminClerkId || null,
     }
   })
 
