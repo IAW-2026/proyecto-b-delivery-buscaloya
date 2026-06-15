@@ -9,7 +9,6 @@
 import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from "next";
 import { Archivo_Black, JetBrains_Mono } from 'next/font/google';
-import { SimulatorPanel } from '@/components/SimulatorPanel';
 import "./globals.css";
 
 const archivoBlack = Archivo_Black({ 
@@ -38,7 +37,6 @@ export default function RootLayout({
       <body className={`${archivoBlack.variable} ${jetbrainsMono.variable} antialiased min-h-screen flex flex-col bg-black text-white`}>
         <ClerkProvider>
           {children}
-          <SimulatorPanel />
         </ClerkProvider>
       </body>
     </html>

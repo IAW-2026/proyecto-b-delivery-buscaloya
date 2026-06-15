@@ -11,7 +11,6 @@ import { prisma } from '@/lib/prisma';
 import { fakerES as faker } from '@faker-js/faker';
 import { revalidatePath } from 'next/cache';
 import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
-import { logApiTraffic } from '@/lib/traveler-logger';
 
 export async function triggerMockOrder() {
   try {
@@ -126,24 +125,6 @@ export async function triggerMockTracking() {
           lon: Number(lng.toFixed(6)),
           source: 'COURIER_APP'
         }
-      });
-
-      // Registrar en la bitácora de tráfico (Traffic Logs)
-      await logApiTraffic({
-        direction: 'INBOUND',
-        endpoint: `/api/deliveries/${delivery.id}/tracking`,
-        method: 'POST',
-        request_payload: {
-          delivery_id: delivery.id,
-          lat: Number(lat.toFixed(6)),
-          lng: Number(lng.toFixed(6)),
-          source: 'COURIER_APP'
-        },
-        response_payload: {
-          success: true,
-          tracking_point: trackingPoint
-        },
-        status_code: 201
       });
 
       count++;

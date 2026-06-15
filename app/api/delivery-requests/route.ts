@@ -6,7 +6,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { logApiTraffic } from '@/lib/traveler-logger';
 import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
 
 const deliverySchema = z.object({
@@ -65,17 +64,6 @@ export async function POST(req: Request) {
     await mockSendConfirmationCodeToBuyer(body.order_id, confirmationCode);
 
     const response = NextResponse.json(delivery, { status: 201 });
-    
-    // Log async
-    await logApiTraffic({
-      direction: 'INBOUND',
-      endpoint: '/api/delivery-requests',
-      method: 'POST',
-      request_payload: requestJson,
-      response_payload: delivery,
-      status_code: 201
-    });
-
     return response;
   } catch (error: any) {
     let statusCode = 500;
@@ -85,15 +73,6 @@ export async function POST(req: Request) {
       statusCode = 400;
       errorResponse = { error: error.issues };
     }
-
-    await logApiTraffic({
-      direction: 'INBOUND',
-      endpoint: '/api/delivery-requests',
-      method: 'POST',
-      request_payload: requestJson,
-      response_payload: errorResponse,
-      status_code: statusCode
-    });
 
     return NextResponse.json(errorResponse, { status: statusCode });
   }
