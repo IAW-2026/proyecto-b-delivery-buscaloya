@@ -8,7 +8,7 @@
  *   - `updateDeliveryStatus`: Avanza el estado de la entrega (PICKED_UP, OUT_FOR_DELIVERY, DELIVERED, CANCELLED) en transacciones seguras de base de datos.
  */
 import { prisma } from '@/lib/prisma';
-import { mockNotifyOrderStatusChange, mockNotifyPaymentClose } from '@/lib/mock-external';
+import { mockNotifyOrderStatusChange, mockNotifyPaymentClose, mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
 import { DeliveryStatus, AvailabilityStatus, EventSource } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
@@ -59,6 +59,9 @@ export async function assignCourier(deliveryId: string, courierId: string) {
     const delivery = await prisma.delivery.findUnique({ where: { id: deliveryId } });
     if (delivery) {
       await mockNotifyOrderStatusChange(delivery.order_id, 'COURIER_ASSIGNED', 'Dron en vuelo a origen');
+      if (delivery.confirmation_code) {
+        await mockSendConfirmationCodeToBuyer(delivery.order_id, delivery.confirmation_code);
+      }
     }
 
     revalidatePath('/admin/dispatch');
