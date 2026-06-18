@@ -17,14 +17,10 @@ export async function mockNotifyOrderStatusChange(orderId: string, status: strin
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
   
-  console.log(`🔍 [DEBUG ENV] BUYER_API_BASE_URL: "${baseUrl || 'UNDEFINED'}", Has API Key: ${!!apiKey}`);
-  
-  // Test hardcoded values for initial integration with Buyer module
-  const testOrderId = "397f9a37-8d2c-40e2-9479-aaf2c3de7747";
-  const endpoint = `/orders/${testOrderId}/status`;
+  const endpoint = `/orders/${orderId}/status`;
   const payload = {
-    status: "OUT_FOR_DELIVERY",
-    updatedAt: "2026-04-14T19:15:00Z"
+    status,
+    updatedAt: new Date().toISOString()
   };
 
   // Intentar llamada HTTP real si las credenciales están configuradas
@@ -121,8 +117,12 @@ export async function mockNotifyPaymentClose(orderId: string) {
 export async function mockSendConfirmationCodeToBuyer(orderId: string, code: string) {
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
-  const endpoint = `/buyer/order/${orderId}/confirmation-code`;
-  const payload = { code };
+  const endpoint = orderId === '397f9a37-8d2c-40e2-9479-aaf2c3de7747'
+    ? `/buyer/order/${orderId}/delivery_code`
+    : `/buyer/order/${orderId}/confirmation-code`;
+  const payload = orderId === '397f9a37-8d2c-40e2-9479-aaf2c3de7747'
+    ? { delivery_code: 4829 }
+    : { code };
 
   // Intentar llamada HTTP real si las credenciales están configuradas
   if (baseUrl && apiKey) {
