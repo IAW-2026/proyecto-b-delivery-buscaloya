@@ -6,6 +6,13 @@
  *   - Si no están configuradas (desarrollo local o pruebas aisladas), realiza un fallback imprimiendo en consola.
  */
 
+// Helper para construir la URL sin barras duplicadas
+function buildUrl(baseUrl: string, endpoint: string): string {
+  const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const cleanEnd = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${cleanBase}${cleanEnd}`;
+}
+
 export async function mockNotifyOrderStatusChange(orderId: string, status: string, message: string) {
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
@@ -23,7 +30,7 @@ export async function mockNotifyOrderStatusChange(orderId: string, status: strin
   // Intentar llamada HTTP real si las credenciales están configuradas
   if (baseUrl && apiKey) {
     try {
-      const url = `${baseUrl}${endpoint}`;
+      const url = buildUrl(baseUrl, endpoint);
       console.log(`📡 [REAL API OUT] -> PATCH ${url}`);
       const res = await fetch(url, {
         method: 'PATCH',
@@ -35,8 +42,15 @@ export async function mockNotifyOrderStatusChange(orderId: string, status: strin
       });
 
       if (res.ok) {
-        const responseData = await res.json();
-        console.log(`✅ [REAL API SUCCESS] -> Notificación de estado enviada a Buyer App.`);
+        // Intentar parsear como JSON de forma segura
+        const text = await res.text();
+        let responseData;
+        try {
+          responseData = JSON.parse(text);
+        } catch {
+          responseData = { rawText: text };
+        }
+        console.log(`✅ [REAL API SUCCESS] -> Notificación de estado enviada a Buyer App.`, responseData);
         return responseData;
       } else {
         console.warn(`⚠️ [REAL API WARNING] -> Error ${res.status} al notificar estado. Haciendo fallback...`);
@@ -65,7 +79,7 @@ export async function mockNotifyPaymentClose(orderId: string) {
   // Intentar llamada HTTP real si las credenciales están configuradas
   if (baseUrl && apiKey) {
     try {
-      const url = `${baseUrl}${endpoint}`;
+      const url = buildUrl(baseUrl, endpoint);
       console.log(`💸 [REAL API OUT] -> POST ${url}`);
       const res = await fetch(url, {
         method: 'POST',
@@ -77,8 +91,14 @@ export async function mockNotifyPaymentClose(orderId: string) {
       });
 
       if (res.ok) {
-        const responseData = await res.json();
-        console.log(`✅ [REAL API SUCCESS] -> Operación financiera cerrada y fondos liberados.`);
+        const text = await res.text();
+        let responseData;
+        try {
+          responseData = JSON.parse(text);
+        } catch {
+          responseData = { rawText: text };
+        }
+        console.log(`✅ [REAL API SUCCESS] -> Operación financiera cerrada y fondos liberados.`, responseData);
         return responseData;
       } else {
         console.warn(`⚠️ [REAL API WARNING] -> Error ${res.status} al cerrar pago. Haciendo fallback...`);
@@ -107,7 +127,7 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
   // Intentar llamada HTTP real si las credenciales están configuradas
   if (baseUrl && apiKey) {
     try {
-      const url = `${baseUrl}${endpoint}`;
+      const url = buildUrl(baseUrl, endpoint);
       console.log(`📡 [REAL API OUT] -> POST ${url}`);
       const res = await fetch(url, {
         method: 'POST',
@@ -119,8 +139,14 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
       });
 
       if (res.ok) {
-        const responseData = await res.json();
-        console.log(`✅ [REAL API SUCCESS] -> Código de confirmación enviado a Buyer App.`);
+        const text = await res.text();
+        let responseData;
+        try {
+          responseData = JSON.parse(text);
+        } catch {
+          responseData = { rawText: text };
+        }
+        console.log(`✅ [REAL API SUCCESS] -> Código de confirmación enviado a Buyer App.`, responseData);
         return responseData;
       } else {
         console.warn(`⚠️ [REAL API WARNING] -> Error ${res.status} al enviar código OTP. Haciendo fallback...`);
