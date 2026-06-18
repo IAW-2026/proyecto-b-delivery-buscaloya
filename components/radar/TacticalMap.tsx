@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { assignCourier, updateDeliveryStatus } from './actions';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import mapaBblanca from '@/app/mapa-bblanca.png';
+import { supabase } from '@/lib/supabase';
 
 export function TacticalMap({
   initialCouriers,
@@ -36,21 +37,68 @@ export function TacticalMap({
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpSuccess, setOtpSuccess] = useState<boolean>(false);
 
+  // Sincronizar props del servidor con el estado del cliente cuando cambian
+  useEffect(() => {
+    setCouriers(initialCouriers);
+  }, [initialCouriers]);
+
+  useEffect(() => {
+    setPendingDeliveries(initialPending);
+  }, [initialPending]);
+
   useEffect(() => {
     setMounted(true);
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch('/api/deliveries/pending');
-        if (res.ok) {
-          const data = await res.json();
-          setPendingDeliveries(data);
+
+    const isPlaceholder = !process.env.NEXT_PUBLIC_SUPABASE_URL || 
+                          !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
+                          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === 'VALOR_ANON_KEY_DE_SUPABASE';
+
+    if (isPlaceholder) {
+      console.warn('⚠️ Supabase Realtime no está configurado. Activando fallback de short-polling (3s).');
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/deliveries/pending');
+          if (res.ok) {
+            const data = await res.json();
+            setPendingDeliveries(data);
+          }
+        } catch (e) {
+          console.error("Radar Error", e);
         }
-      } catch (e) {
-        console.error("Radar Error", e);
-      }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+
+    // Suscripción reactiva en tiempo real con Supabase
+    const deliveryChannel = supabase
+      .channel('delivery-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Delivery' },
+        (payload) => {
+          console.log('⚡ [Realtime] Cambio en Delivery recibido:', payload);
+          router.refresh();
+        }
+      )
+      .subscribe();
+
+    const courierChannel = supabase
+      .channel('courier-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Courier' },
+        (payload) => {
+          console.log('⚡ [Realtime] Cambio en Courier recibido:', payload);
+          router.refresh();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(deliveryChannel);
+      supabase.removeChannel(courierChannel);
+    };
+  }, [router]);
 
   // Bounding Box para Bahía Blanca (Mapeo de Coordenadas a % de Mapa)
   const MAP_BOUNDS = {
