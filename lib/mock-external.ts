@@ -10,6 +10,8 @@ export async function mockNotifyOrderStatusChange(orderId: string, status: strin
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
   
+  console.log(`🔍 [DEBUG ENV] BUYER_API_BASE_URL: "${baseUrl || 'UNDEFINED'}", Has API Key: ${!!apiKey}`);
+  
   // Test hardcoded values for initial integration with Buyer module
   const testOrderId = "397f9a37-8d2c-40e2-9479-aaf2c3de7747";
   const endpoint = `/orders/${testOrderId}/status`;
