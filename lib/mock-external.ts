@@ -16,7 +16,7 @@ function buildUrl(baseUrl: string, endpoint: string): string {
 export async function mockNotifyOrderStatusChange(orderId: string, status: string, message: string) {
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
-  
+
   const endpoint = `/orders/${orderId}/status`;
   const payload = {
     status,
@@ -117,9 +117,7 @@ export async function mockNotifyPaymentClose(orderId: string) {
 export async function mockSendConfirmationCodeToBuyer(orderId: string, code: string) {
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
-  const endpoint = orderId === '397f9a37-8d2c-40e2-9479-aaf2c3de7747'
-    ? `/buyer/order/${orderId}/delivery_code`
-    : `/buyer/order/${orderId}/confirmation-code`;
+  const endpoint = `/orders/${orderId}/delivery_code`;
   const payload = orderId === '397f9a37-8d2c-40e2-9479-aaf2c3de7747'
     ? { delivery_code: 4829 }
     : { code };
