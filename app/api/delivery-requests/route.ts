@@ -6,7 +6,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
+
 
 const deliverySchema = z.object({
   order_id: z.string().min(1, "Order ID requerido"),
@@ -73,8 +73,6 @@ export async function POST(req: Request) {
       }
     });
 
-    // Simular el envío del código OTP a la Buyer App
-    await mockSendConfirmationCodeToBuyer(body.order_id, confirmationCode);
 
     const response = NextResponse.json(delivery, { status: 201 });
     return response;

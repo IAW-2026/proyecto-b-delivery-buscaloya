@@ -10,7 +10,7 @@
 import { prisma } from '@/lib/prisma';
 import { fakerES as faker } from '@faker-js/faker';
 import { revalidatePath } from 'next/cache';
-import { mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
+
 
 export async function triggerMockOrder() {
   try {
@@ -61,8 +61,6 @@ export async function triggerMockOrder() {
       }
     });
 
-    // Simular el envío del código OTP a la Buyer App
-    await mockSendConfirmationCodeToBuyer(orderId, confirmationCode);
 
     revalidatePath('/admin');
     revalidatePath('/dashboard');
