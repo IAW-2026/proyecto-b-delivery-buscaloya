@@ -158,10 +158,10 @@ async function main() {
   // Orden 1: Pendiente de Asignación 1
   const d1 = await prisma.delivery.create({
     data: {
-      order_id: 'ORD-9821',
+      order_id: '397f9a37-8d2c-40e2-9479-aaf2c3de7747',
       status: DeliveryStatus.ACCEPTED_FOR_ASSIGNMENT,
       color_code: '#FF007F',
-      confirmation_code: '1234',
+      confirmation_code: '4829',
       snapshot: {
         create: {
           seller_id: 'SEL-001',
@@ -459,7 +459,7 @@ async function main() {
         direction: 'INBOUND',
         endpoint: '/api/delivery-requests',
         method: 'POST',
-        request_payload: { order_id: 'ORD-9821', seller_name: 'PIZZERÍA DI NAPOLI', buyer_name: 'ALICIA GOMEZ' },
+        request_payload: { order_id: '397f9a37-8d2c-40e2-9479-aaf2c3de7747', seller_name: 'PIZZERÍA DI NAPOLI', buyer_name: 'ALICIA GOMEZ' },
         response_payload: { success: true, message: 'Solicitud aceptada para asignación' },
         status_code: 200,
         created_at: new Date(Date.now() - 7200000)
