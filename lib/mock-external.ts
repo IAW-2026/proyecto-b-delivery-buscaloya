@@ -118,9 +118,7 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
   const endpoint = `/orders/${orderId}/delivery_code`;
-  const payload = orderId === '397f9a37-8d2c-40e2-9479-aaf2c3de7747'
-    ? { delivery_code: 4829 }
-    : { delivery_code: Number(code) };
+  const payload = { delivery_code: Number(code) };
 
   // Intentar llamada HTTP real si las credenciales están configuradas
   if (baseUrl && apiKey) {
