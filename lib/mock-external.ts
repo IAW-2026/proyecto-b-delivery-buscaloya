@@ -120,15 +120,15 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
   const endpoint = `/orders/${orderId}/delivery_code`;
   const payload = orderId === '397f9a37-8d2c-40e2-9479-aaf2c3de7747'
     ? { delivery_code: 4829 }
-    : { code };
+    : { delivery_code: Number(code) };
 
   // Intentar llamada HTTP real si las credenciales están configuradas
   if (baseUrl && apiKey) {
     try {
       const url = buildUrl(baseUrl, endpoint);
-      console.log(`📡 [REAL API OUT] -> POST ${url}`);
+      console.log(`📡 [REAL API OUT] -> PATCH ${url}`);
       const res = await fetch(url, {
-        method: 'POST',
+        method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
