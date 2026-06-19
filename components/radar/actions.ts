@@ -58,7 +58,7 @@ export async function assignCourier(deliveryId: string, courierId: string) {
 
     const delivery = await prisma.delivery.findUnique({ where: { id: deliveryId } });
     if (delivery) {
-      await mockNotifyOrderStatusChange(delivery.order_id, 'OUT_FOR_DELIVERY', 'Dron en vuelo a origen');
+      await mockNotifyOrderStatusChange(delivery.order_id, 'COURIER_ASSIGNED', 'Dron en vuelo a origen');
       if (delivery.confirmation_code) {
         await mockSendConfirmationCodeToBuyer(delivery.order_id, delivery.confirmation_code);
       }
