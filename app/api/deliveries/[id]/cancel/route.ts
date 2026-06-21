@@ -22,8 +22,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // Ejecutar todo de forma atómica en una transacción de base de datos
     const delivery = await prisma.$transaction(async (tx) => {
       // 1. Obtener la entrega activa para validar que exista e incluir asignaciones activas
-      const currentDelivery = await tx.delivery.findUnique({
-        where: { id },
+      const currentDelivery = await tx.delivery.findFirst({
+        where: {
+          OR: [
+            { id },
+            { order_id: id }
+          ]
+        },
         include: {
           assignments: {
             where: { status: AssignmentStatus.ASSIGNED },
@@ -64,7 +69,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       // 3. Registrar el evento de estado de cancelación
       await tx.deliveryStatusEvent.create({
         data: {
-          delivery_id: id,
+          delivery_id: currentDelivery.id,
           status: DeliveryStatus.CANCELLED_SUCCESSFULLY,
           source: EventSource.SYSTEM,
           reason: 'Misión abortada por solicitud de cancelación del cliente'
@@ -73,7 +78,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
       // 4. Actualizar el estado de la entrega a cancelada
       return await tx.delivery.update({
-        where: { id },
+        where: { id: currentDelivery.id },
         data: { status: DeliveryStatus.CANCELLED_SUCCESSFULLY }
       });
     });
