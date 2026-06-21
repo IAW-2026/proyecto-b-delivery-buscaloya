@@ -15,9 +15,15 @@ import { revalidatePath } from 'next/cache';
 export async function assignCourier(deliveryId: string, courierId: string) {
   try {
     await prisma.$transaction(async (tx) => {
-      // 1. Verificar que el courier está disponible
+      // 1. Verificar que el courier está disponible y la entrega espera asignación
       const courier = await tx.courier.findUnique({ where: { id: courierId } });
       if (courier?.status !== 'AVAILABLE') throw new Error('Courier no disponible');
+
+      const delivery = await tx.delivery.findUnique({ where: { id: deliveryId } });
+      if (!delivery) throw new Error('Entrega no encontrada');
+      if (delivery.status !== 'ACCEPTED_FOR_ASSIGNMENT') {
+        throw new Error('La entrega ya no se encuentra pendiente de asignación');
+      }
 
       // 2. Generar Color Táctico 100% Aleatorio (Hexadecimal)
       const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase();
@@ -75,12 +81,19 @@ export async function assignCourier(deliveryId: string, courierId: string) {
 export async function updateDeliveryStatus(deliveryId: string, newStatus: DeliveryStatus, code?: string) {
   try {
     await prisma.$transaction(async (tx) => {
+      // 1. Obtener la entrega para validar su existencia y estado actual
+      const delivery = await tx.delivery.findUnique({
+        where: { id: deliveryId }
+      });
+      if (!delivery) throw new Error('Entrega no encontrada');
+
+      // 2. Impedir cambios si la entrega ya se encuentra en un estado final
+      if (['DELIVERED', 'DELIVERY_FAILED', 'CANCELLED_SUCCESSFULLY'].includes(delivery.status)) {
+        throw new Error('No se puede modificar el estado de una entrega finalizada o cancelada');
+      }
+
       // Validar código OTP si se solicita completar la entrega
       if (newStatus === 'DELIVERED') {
-        const delivery = await tx.delivery.findUnique({
-          where: { id: deliveryId }
-        });
-        if (!delivery) throw new Error('Entrega no encontrada');
         if (!code || delivery.confirmation_code !== code) {
           throw new Error('CÓDIGO DE CONFIRMACIÓN OTP INVÁLIDO');
         }

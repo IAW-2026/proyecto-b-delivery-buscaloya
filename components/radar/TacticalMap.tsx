@@ -28,6 +28,7 @@ export function TacticalMap({
   const router = useRouter();
   const [couriers, setCouriers] = useState<any[]>(initialCouriers);
   const [pendingDeliveries, setPendingDeliveries] = useState<any[]>(initialPending);
+  const [localActiveMissions, setLocalActiveMissions] = useState<any[]>(activeMissions);
   const [selectedCourierId, setSelectedCourierId] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showAssignmentFor, setShowAssignmentFor] = useState<any | null>(null);
@@ -45,6 +46,10 @@ export function TacticalMap({
   useEffect(() => {
     setPendingDeliveries(initialPending);
   }, [initialPending]);
+
+  useEffect(() => {
+    setLocalActiveMissions(activeMissions);
+  }, [activeMissions]);
 
   useEffect(() => {
     setMounted(true);
@@ -76,7 +81,18 @@ export function TacticalMap({
         'postgres_changes',
         { event: '*', schema: 'public', table: 'Delivery' },
         (payload) => {
-          console.log('⚡ [Realtime] Cambio en Delivery recibido:', payload);
+          const id = (payload.new as any)?.id || (payload.old as any)?.id;
+          if (id) {
+            setPendingDeliveries(prev => prev.filter(p => p.id !== id));
+            setLocalActiveMissions(prev => prev.filter(m => m.id !== id));
+          }
+          if (payload.new) {
+            const updatedDelivery = payload.new as any;
+            if (['CANCELLED_SUCCESSFULLY', 'DELIVERED', 'DELIVERY_FAILED'].includes(updatedDelivery.status)) {
+              setPendingDeliveries(prev => prev.filter(p => p.id !== updatedDelivery.id));
+              setLocalActiveMissions(prev => prev.filter(m => m.id !== updatedDelivery.id));
+            }
+          }
           router.refresh();
         }
       )
@@ -89,6 +105,10 @@ export function TacticalMap({
         { event: '*', schema: 'public', table: 'Courier' },
         (payload) => {
           console.log('⚡ [Realtime] Cambio en Courier recibido:', payload);
+          const updatedCourier = payload.new as any;
+          if (updatedCourier) {
+            setCouriers(prev => prev.map(c => c.id === updatedCourier.id ? { ...c, ...updatedCourier } : c));
+          }
           router.refresh();
         }
       )
@@ -156,7 +176,7 @@ export function TacticalMap({
     setIsProcessing(true);
 
     // Buscar la misión para obtener coordenadas de destino
-    const mission = activeMissions.find(m => m.id === deliveryId);
+    const mission = localActiveMissions.find(m => m.id === deliveryId);
 
     const res = await updateDeliveryStatus(deliveryId, newStatus);
 
@@ -221,7 +241,7 @@ export function TacticalMap({
 
               {/* CAPA DE NAVEGACIÓN (SVG) - Solo pre-vuelo a destino */}
               <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none overflow-visible">
-                {activeMissions.map(m => {
+                {localActiveMissions.map(m => {
                   const courierId = m.assignments?.[0]?.courier_id;
                   const courier = couriers.find(c => c.id === courierId);
 
@@ -281,7 +301,7 @@ export function TacticalMap({
               })}
 
               {/* ORBES DE ÓRDENES ACTIVAS (Misiones en curso) */}
-              {activeMissions.map(m => {
+              {localActiveMissions.map(m => {
                 if (m.snapshot?.seller_x === undefined) return null;
                 // Si ya fue recogido, quizás mostramos el destino (buyer)? Por ahora según el pedido, el local
                 const posX = m.snapshot.seller_x / 100;
@@ -307,7 +327,7 @@ export function TacticalMap({
               })}
 
               {/* ORBES DE DESTINO (Ubicación del Comprador) */}
-              {activeMissions.map(m => {
+              {localActiveMissions.map(m => {
                 if (!['PICKED_UP', 'OUT_FOR_DELIVERY'].includes(m.status) || m.snapshot?.buyer_x === undefined) return null;
 
                 const posX = m.snapshot.buyer_x / 100;
@@ -341,7 +361,7 @@ export function TacticalMap({
                 const posY = c.last_y / 100;
 
                 // Buscar si este courier tiene una misión activa
-                const activeMission = activeMissions.find(m => m.assignments?.[0]?.courier_id === c.id);
+                const activeMission = localActiveMissions.find(m => m.assignments?.[0]?.courier_id === c.id);
                 const isAssigned = !!activeMission;
                 const courierColor = isAssigned ? activeMission.color_code : '#10B981'; // Verde si disponible, color misión si no
 
@@ -571,7 +591,7 @@ export function TacticalMap({
             Active_Operations
           </div>
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar bg-zinc-950">
-            {activeMissions.map(m => {
+            {localActiveMissions.map(m => {
               let progress = 25;
               if (m.status === 'PICKED_UP') progress = 50;
               if (m.status === 'OUT_FOR_DELIVERY') progress = 75;
@@ -646,7 +666,7 @@ export function TacticalMap({
                 </div>
               );
             })}
-            {activeMissions.length === 0 && (
+            {localActiveMissions.length === 0 && (
               <div className="h-full flex items-center justify-center text-zinc-800 text-[10px] font-black uppercase tracking-[0.4em]">No_Active</div>
             )}
           </div>
