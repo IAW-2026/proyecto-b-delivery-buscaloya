@@ -172,8 +172,15 @@ export async function mockNotifySellerDeliveryStatus(orderId: string, status: st
   const baseUrl = process.env.SELLER_API_BASE_URL;
   const apiKey = process.env.SELLER_API_KEY;
   const endpoint = `/api/seller/packages/${orderId}/dispatch/delivery-status`;
+
+  // Mapear el estado interno de la app de envíos al estado esperado por la Seller App
+  let sellerStatus = status;
+  if (status === 'CANCELLED_SUCCESSFULLY' || status === 'DELIVERY_FAILED') {
+    sellerStatus = 'CANCELLED';
+  }
+
   const payload = {
-    status,
+    status: sellerStatus,
     updatedAt: new Date().toISOString()
   };
 
