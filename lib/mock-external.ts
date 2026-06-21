@@ -196,7 +196,8 @@ export async function mockNotifySellerDeliveryStatus(orderId: string, status: st
         console.log(`✅ [REAL SELLER API SUCCESS] -> Notificación de estado enviada a Seller App.`, responseData);
         return responseData;
       } else {
-        console.warn(`⚠️ [REAL SELLER API WARNING] -> Error ${res.status} al notificar seller. Haciendo fallback...`);
+        const errorText = await res.text();
+        console.warn(`⚠️ [REAL SELLER API WARNING] -> Error ${res.status} al notificar seller. Response: ${errorText}. Haciendo fallback...`);
       }
     } catch (error) {
       console.error(`❌ [REAL SELLER API ERROR] -> Fallo de red al notificar seller:`, error);
