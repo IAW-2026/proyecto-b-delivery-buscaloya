@@ -8,7 +8,7 @@
  *   - `updateDeliveryStatus`: Avanza el estado de la entrega (PICKED_UP, OUT_FOR_DELIVERY, DELIVERED, CANCELLED) en transacciones seguras de base de datos.
  */
 import { prisma } from '@/lib/prisma';
-import { mockNotifyOrderStatusChange, mockNotifyPaymentClose, mockSendConfirmationCodeToBuyer } from '@/lib/mock-external';
+import { mockNotifyOrderStatusChange, mockNotifyPaymentClose, mockSendConfirmationCodeToBuyer, mockNotifySellerDeliveryStatus } from '@/lib/mock-external';
 import { DeliveryStatus, AvailabilityStatus, EventSource } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 
@@ -161,11 +161,12 @@ export async function updateDeliveryStatus(deliveryId: string, newStatus: Delive
     if (delivery) {
       if (newStatus === 'PICKED_UP') {
         await mockNotifyOrderStatusChange(delivery.order_id, 'PICKED_UP', 'Carga asegurada');
+        await mockNotifySellerDeliveryStatus(delivery.order_id, 'PICKED_UP');
       } else if (newStatus === 'OUT_FOR_DELIVERY') {
         await mockNotifyOrderStatusChange(delivery.order_id, 'OUT_FOR_DELIVERY', 'Dron en tránsito a destino');
       } else if (newStatus === 'DELIVERED') {
-        // Sin actualizar status a nadie por ahora según especificación
-        // await mockNotifyOrderStatusChange(delivery.order_id, 'DELIVERED', 'Misión completada');
+        await mockNotifyOrderStatusChange(delivery.order_id, 'DELIVERED', 'Misión completada');
+        await mockNotifySellerDeliveryStatus(delivery.order_id, 'DELIVERED');
         // await mockNotifyPaymentClose(delivery.order_id);
       } else if (newStatus === 'CANCELLED_SUCCESSFULLY') {
         await mockNotifyOrderStatusChange(delivery.order_id, 'CANCELLED_SUCCESSFULLY', 'Misión abortada');

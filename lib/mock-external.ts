@@ -161,3 +161,54 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
 
   return { success: true };
 }
+
+export async function mockNotifySellerDeliveryStatus(orderId: string, status: string) {
+  const baseUrl = process.env.SELLER_API_BASE_URL;
+  const apiKey = process.env.SELLER_API_KEY;
+  const endpoint = `/api/seller/packages/${orderId}/delivery-status`;
+  const payload = {
+    status,
+    updatedAt: new Date().toISOString()
+  };
+
+  // Intentar llamada HTTP real si las credenciales están configuradas
+  if (baseUrl && apiKey) {
+    try {
+      const url = buildUrl(baseUrl, endpoint);
+      console.log(`📡 [REAL SELLER API OUT] -> PATCH ${url}`);
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const text = await res.text();
+        let responseData;
+        try {
+          responseData = JSON.parse(text);
+        } catch {
+          responseData = { rawText: text };
+        }
+        console.log(`✅ [REAL SELLER API SUCCESS] -> Notificación de estado enviada a Seller App.`, responseData);
+        return responseData;
+      } else {
+        console.warn(`⚠️ [REAL SELLER API WARNING] -> Error ${res.status} al notificar seller. Haciendo fallback...`);
+      }
+    } catch (error) {
+      console.error(`❌ [REAL SELLER API ERROR] -> Fallo de red al notificar seller:`, error);
+    }
+  }
+
+  // Fallback a comportamiento simulado en consola
+  console.log(`\n======================================`);
+  console.log(`📡 [MOCK SELLER API CALL OUT] -> PATCH ${endpoint}`);
+  console.log(`📦 Payload: ${JSON.stringify(payload)}`);
+  console.log(`✅ Resultado: Notificación enviada al Vendedor (MOCK).`);
+  console.log(`======================================\n`);
+
+  return { success: true };
+}
