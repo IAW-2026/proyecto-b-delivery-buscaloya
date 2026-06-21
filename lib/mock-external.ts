@@ -17,9 +17,15 @@ export async function mockNotifyOrderStatusChange(orderId: string, status: strin
   const baseUrl = process.env.BUYER_API_BASE_URL;
   const apiKey = process.env.BUYER_API_KEY;
 
+  // Mapear el estado interno de la app de envíos al estado esperado por la Buyer App
+  let buyerStatus = status;
+  if (status === 'CANCELLED_SUCCESSFULLY' || status === 'DELIVERY_FAILED') {
+    buyerStatus = 'CANCELLED';
+  }
+
   const endpoint = `/orders/${orderId}/status`;
   const payload = {
-    status,
+    status: buyerStatus,
     updatedAt: new Date().toISOString()
   };
 
