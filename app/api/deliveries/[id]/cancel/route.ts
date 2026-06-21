@@ -4,6 +4,18 @@ import { DeliveryStatus, AvailabilityStatus, AssignmentStatus, EventSource } fro
 import { mockNotifyOrderStatusChange } from '@/lib/mock-external';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  // Validación de API Key para llamadas entrantes si está configurada en el entorno
+  const expectedApiKey = process.env.DELIVERY_API_KEY;
+  if (expectedApiKey) {
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Falta cabecera de autorización (Bearer Token)' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+    if (token !== expectedApiKey) {
+      return NextResponse.json({ error: 'API Key inválida o no autorizada' }, { status: 401 });
+    }
+  }
   try {
     const { id } = await params;
 
