@@ -6,6 +6,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/couriers',
   '/api/analytics',
   '/api/deliveries/(.*)/tracking',
+  '/api/deliveries/(.*)/cancel',
   '/api/deliveries/quote'
 ])
 
