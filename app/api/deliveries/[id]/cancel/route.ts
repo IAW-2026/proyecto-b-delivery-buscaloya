@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { DeliveryStatus, AvailabilityStatus, AssignmentStatus, EventSource } from '@prisma/client';
-import { mockNotifyOrderStatusChange } from '@/lib/mock-external';
+import { mockNotifyOrderStatusChange, mockNotifySellerDeliveryStatus } from '@/lib/mock-external';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   // Validación de API Key para llamadas entrantes si está configurada en el entorno
@@ -83,8 +83,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       });
     });
 
-    // 5. Notificar a la Buyer App (fuera de la transacción de forma segura)
+    // 5. Notificar a la Buyer App y al Seller (fuera de la transacción de forma segura)
     await mockNotifyOrderStatusChange(delivery.order_id, 'CANCELLED_SUCCESSFULLY', 'Misión abortada');
+    await mockNotifySellerDeliveryStatus(delivery.order_id, 'CANCELLED_SUCCESSFULLY');
 
     return NextResponse.json({
       success: true,

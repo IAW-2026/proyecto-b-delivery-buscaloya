@@ -170,6 +170,7 @@ export async function updateDeliveryStatus(deliveryId: string, newStatus: Delive
         // await mockNotifyPaymentClose(delivery.order_id);
       } else if (newStatus === 'CANCELLED_SUCCESSFULLY') {
         await mockNotifyOrderStatusChange(delivery.order_id, 'CANCELLED_SUCCESSFULLY', 'Misión abortada');
+        await mockNotifySellerDeliveryStatus(delivery.order_id, 'CANCELLED_SUCCESSFULLY');
       }
     }
 
