@@ -165,7 +165,7 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
 export async function mockNotifySellerDeliveryStatus(orderId: string, status: string) {
   const baseUrl = process.env.SELLER_API_BASE_URL;
   const apiKey = process.env.SELLER_API_KEY;
-  const endpoint = `/api/seller/packages/${orderId}/dispatch`;
+  const endpoint = `/api/seller/packages/${orderId}/delivery-status`;
   const payload = {
     status,
     updatedAt: new Date().toISOString()
@@ -175,9 +175,9 @@ export async function mockNotifySellerDeliveryStatus(orderId: string, status: st
   if (baseUrl && apiKey) {
     try {
       const url = buildUrl(baseUrl, endpoint);
-      console.log(`📡 [REAL SELLER API OUT] -> POST ${url}`);
+      console.log(`📡 [REAL SELLER API OUT] -> PATCH ${url}`);
       const res = await fetch(url, {
-        method: 'POST',
+        method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ export async function mockNotifySellerDeliveryStatus(orderId: string, status: st
 
   // Fallback a comportamiento simulado en consola
   console.log(`\n======================================`);
-  console.log(`📡 [MOCK SELLER API CALL OUT] -> POST ${endpoint}`);
+  console.log(`📡 [MOCK SELLER API CALL OUT] -> PATCH ${endpoint}`);
   console.log(`📦 Payload: ${JSON.stringify(payload)}`);
   console.log(`✅ Resultado: Notificación enviada al Vendedor (MOCK).`);
   console.log(`======================================\n`);
