@@ -175,9 +175,9 @@ export async function mockNotifySellerDeliveryStatus(orderId: string, status: st
   if (baseUrl && apiKey) {
     try {
       const url = buildUrl(baseUrl, endpoint);
-      console.log(`📡 [REAL SELLER API OUT] -> PATCH ${url}`);
+      console.log(`📡 [REAL SELLER API OUT] -> POST ${url}`);
       const res = await fetch(url, {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ export async function mockNotifySellerDeliveryStatus(orderId: string, status: st
 
   // Fallback a comportamiento simulado en consola
   console.log(`\n======================================`);
-  console.log(`📡 [MOCK SELLER API CALL OUT] -> PATCH ${endpoint}`);
+  console.log(`📡 [MOCK SELLER API CALL OUT] -> POST ${endpoint}`);
   console.log(`📦 Payload: ${JSON.stringify(payload)}`);
   console.log(`✅ Resultado: Notificación enviada al Vendedor (MOCK).`);
   console.log(`======================================\n`);
