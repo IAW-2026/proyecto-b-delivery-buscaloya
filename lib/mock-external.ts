@@ -165,7 +165,7 @@ export async function mockSendConfirmationCodeToBuyer(orderId: string, code: str
 export async function mockNotifySellerDeliveryStatus(orderId: string, status: string) {
   const baseUrl = process.env.SELLER_API_BASE_URL;
   const apiKey = process.env.SELLER_API_KEY;
-  const endpoint = `/api/seller/packages/${orderId}/delivery-status`;
+  const endpoint = `/api/orders/${orderId}/status`;
   const payload = {
     status,
     updatedAt: new Date().toISOString()
