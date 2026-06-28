@@ -105,7 +105,7 @@ async function main() {
   console.log('📦 CREANDO ENTREGAS Y HISTORIALES COHERENTES...');
   const deliveries = [
   {
-    "id": "659e27e9-cbd6-44d9-91d3-d05e0a527872",
+    "id": "71a3fcd6-5692-4c48-bfc5-67155f83408c",
     "order_id": "123fe899-d6a9-4d63-806c-0dcf5acf0caa",
     "status": "COURIER_ASSIGNED",
     "color_code": "#10B981",
@@ -130,7 +130,7 @@ async function main() {
     "genStatus": "COURIER_ASSIGNED"
   },
   {
-    "id": "22250a23-0526-4864-ab6c-8c26127b365e",
+    "id": "b6ed742b-c317-4c24-bd71-2a74ceee1056",
     "order_id": "1501fc2d-f8ba-4cdb-a2c2-2902f4805d6e",
     "status": "DELIVERED",
     "color_code": "#3B82F6",
@@ -155,7 +155,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "bb14d2fd-8e8a-420a-9559-4f029fd448a5",
+    "id": "3176cb17-c375-4152-b5a6-a379f1435acc",
     "order_id": "1589a989-000d-44cd-acc0-49933fafd468",
     "status": "COURIER_ASSIGNED",
     "color_code": "#10B981",
@@ -180,7 +180,7 @@ async function main() {
     "genStatus": "COURIER_ASSIGNED"
   },
   {
-    "id": "fd07d3ca-6453-4c2b-b9bf-e95412daf81e",
+    "id": "c73a8908-6a8c-4116-963b-09bb51a27639",
     "order_id": "161f8133-449a-4df3-ab99-1ccf7eb1ab68",
     "status": "COURIER_ASSIGNED",
     "color_code": "#3B82F6",
@@ -205,7 +205,7 @@ async function main() {
     "genStatus": "COURIER_ASSIGNED"
   },
   {
-    "id": "7aad56f0-1aab-425a-97c3-e699efc18832",
+    "id": "f2a26ed7-41e5-442d-ac42-2de93d0c55e1",
     "order_id": "16410813-553c-4ff0-bb72-c47a36d38aa8",
     "status": "OUT_FOR_DELIVERY",
     "color_code": "#10B981",
@@ -230,7 +230,7 @@ async function main() {
     "genStatus": "OUT_FOR_DELIVERY"
   },
   {
-    "id": "17e2018a-087d-4b96-8b7f-a7f48bcbcec9",
+    "id": "3129e740-3243-4166-a24f-9029adf841d3",
     "order_id": "23c9d87f-d4b6-45d9-b842-bbbb92d3bc12",
     "status": "DELIVERY_FAILED",
     "color_code": "#3B82F6",
@@ -255,7 +255,7 @@ async function main() {
     "genStatus": "DELIVERY_FAILED"
   },
   {
-    "id": "f2af9058-7726-4cdb-aaf8-d4cae6d9fdfc",
+    "id": "c7010305-456c-4e91-9633-96890a7f15f6",
     "order_id": "2c303175-5836-48a8-818b-f449917c9f94",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -280,7 +280,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "514b603b-93d3-4492-8d6b-8d68aa641ac6",
+    "id": "970100ab-221a-44a3-a220-c8264a5a180f",
     "order_id": "30494f43-750e-4fcb-89df-55536b5c51a4",
     "status": "OUT_FOR_DELIVERY",
     "color_code": "#3B82F6",
@@ -305,7 +305,7 @@ async function main() {
     "genStatus": "OUT_FOR_DELIVERY"
   },
   {
-    "id": "4c82a74f-7a9d-471e-805a-813421e5a734",
+    "id": "c99e66a4-e6c9-4554-9f94-27c0727f6a13",
     "order_id": "35137a4f-fb2a-4c3b-9666-66f917040ce3",
     "status": "CANCELLED_SUCCESSFULLY",
     "color_code": "#10B981",
@@ -330,7 +330,7 @@ async function main() {
     "genStatus": "CANCELLED_SUCCESSFULLY"
   },
   {
-    "id": "6461d53d-d3e3-496c-becc-638250466999",
+    "id": "a3c843bc-b616-4cf4-ba6b-550ba50795b3",
     "order_id": "48a2735f-cb72-4531-8953-5a689c15fd0f",
     "status": "DELIVERED",
     "color_code": "#3B82F6",
@@ -355,7 +355,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "787e2e14-a851-454c-b774-1f5a9f815c91",
+    "id": "dc5301e3-815b-4725-8561-2ecaf36a75ae",
     "order_id": "518cc912-45fa-42e6-969f-ac5bf5c8b56e",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#10B981",
@@ -380,7 +380,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "e5fa3da6-7524-4932-ba1d-11f592f04340",
+    "id": "46165f40-509f-424e-99ba-9018dae7c903",
     "order_id": "528974d8-56ce-4a01-8206-fcb70ed097d4",
     "status": "DELIVERED",
     "color_code": "#3B82F6",
@@ -405,7 +405,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "ffd68d0e-fc4a-4359-a3da-4275e1fe1b77",
+    "id": "9e48040b-3333-4a56-9337-b44bd80671db",
     "order_id": "545cef0a-a6f7-43cd-8229-b9fa97989181",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -430,7 +430,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "9c563ba1-3b28-4b5f-83df-73e24517e9ed",
+    "id": "89f53e99-d8c1-467d-aa80-1eee0c6e1919",
     "order_id": "619de708-2e9d-4b54-bd45-342908c9ace6",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#3B82F6",
@@ -455,7 +455,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "c7286919-ad1b-4ae7-be88-3deb29dda182",
+    "id": "280f610c-4da2-4c03-a01c-f4b07be739f1",
     "order_id": "66e8a22e-081c-485f-b2c6-5ef81ba682ae",
     "status": "PICKED_UP",
     "color_code": "#10B981",
@@ -480,7 +480,7 @@ async function main() {
     "genStatus": "PICKED_UP"
   },
   {
-    "id": "7c639e18-a8a6-4656-a758-135d81d8c875",
+    "id": "2d621998-fc94-4781-8933-790b0b995365",
     "order_id": "6b51eeeb-78ca-476e-abe0-cbed475da66c",
     "status": "PICKED_UP",
     "color_code": "#3B82F6",
@@ -505,7 +505,7 @@ async function main() {
     "genStatus": "PICKED_UP"
   },
   {
-    "id": "529a42d9-61c3-47e9-9c70-0017b9c1101f",
+    "id": "4e07af20-d607-45ff-bad8-81223ef3c615",
     "order_id": "6c231159-f471-49f9-b9cc-7a404a204297",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -530,7 +530,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "d4122dc0-fab4-4d7b-a24c-7eaacdc2a579",
+    "id": "2acc4709-8af3-4250-b86f-f4eb86127f1b",
     "order_id": "6e1db3a9-fc17-4b57-ad7a-b6dba277eb98",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#3B82F6",
@@ -555,7 +555,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "3d5f5ea6-3a09-4e87-b738-0f3772968f8a",
+    "id": "efb53700-9d2e-4e0a-98f3-122b38a7afb7",
     "order_id": "70d171e3-d938-43b1-aa14-45d316d598b7",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#10B981",
@@ -580,7 +580,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "072586f5-79e9-4cbe-a40d-e827fc625543",
+    "id": "1903523b-005c-4255-951d-2d366fe80801",
     "order_id": "7133defa-a370-4a9d-aabb-8d5a7a2efaa9",
     "status": "CANCELLED_SUCCESSFULLY",
     "color_code": "#3B82F6",
@@ -605,7 +605,7 @@ async function main() {
     "genStatus": "CANCELLED_SUCCESSFULLY"
   },
   {
-    "id": "dded9932-796f-4b02-bc7b-70e1c4cfde6c",
+    "id": "6ef3cba5-1f3a-4936-829c-bc6c5e250442",
     "order_id": "74c09d0f-6798-44b8-88ed-71ea7c4590ba",
     "status": "PICKED_UP",
     "color_code": "#10B981",
@@ -630,7 +630,7 @@ async function main() {
     "genStatus": "PICKED_UP"
   },
   {
-    "id": "bc3ed885-7066-43fd-ade9-dbef83891003",
+    "id": "44fb896d-e7d8-4a75-b1ba-48a5ca6083b0",
     "order_id": "758ab2ce-5013-40b1-a883-019704830abf",
     "status": "CANCELLED_SUCCESSFULLY",
     "color_code": "#3B82F6",
@@ -655,7 +655,7 @@ async function main() {
     "genStatus": "CANCELLED_SUCCESSFULLY"
   },
   {
-    "id": "58a686ec-d068-434f-817e-93ca59f5b118",
+    "id": "bdffe3ee-e388-4dae-8b86-d8ccb53b45d5",
     "order_id": "82dcbaea-0c2f-44ca-8284-582092de95dd",
     "status": "COURIER_ASSIGNED",
     "color_code": "#10B981",
@@ -680,7 +680,7 @@ async function main() {
     "genStatus": "COURIER_ASSIGNED"
   },
   {
-    "id": "850445e9-65fb-4d4c-bfcd-a41961084dab",
+    "id": "ade644b5-2f90-42b7-98d1-c2e698c67ec3",
     "order_id": "91953f50-7220-46f6-84ec-1372a39f5e91",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#3B82F6",
@@ -705,7 +705,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "654ebe66-fb0b-4548-87f9-0bc8972c773b",
+    "id": "91670261-11dd-4d61-b85e-248303660e15",
     "order_id": "98ff56d3-4829-47bf-9f2b-b3aecd6e9ce1",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#10B981",
@@ -730,7 +730,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "e4c0b961-8a27-4455-adac-750aeb7970d2",
+    "id": "50f1a6c1-b244-4dfe-8c23-1e743d61455f",
     "order_id": "9ab51a78-b22f-4747-870e-ea3eeb2b0653",
     "status": "PICKED_UP",
     "color_code": "#3B82F6",
@@ -755,7 +755,7 @@ async function main() {
     "genStatus": "PICKED_UP"
   },
   {
-    "id": "9e899e79-4d4c-48b5-8c8f-c7423536ceb1",
+    "id": "d5bcae10-198f-421f-a633-9c816089f7a0",
     "order_id": "a2a43b41-00f8-4109-bdb2-c95b2bb4231f",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -780,7 +780,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "88a8e96f-1987-4bc1-a040-472cbfb4186f",
+    "id": "26577a96-e913-40cf-bedd-ed74becd2ea2",
     "order_id": "a5bbb438-a9a1-4d0f-91bb-bd778f5a5d8a",
     "status": "OUT_FOR_DELIVERY",
     "color_code": "#3B82F6",
@@ -805,7 +805,7 @@ async function main() {
     "genStatus": "OUT_FOR_DELIVERY"
   },
   {
-    "id": "b523b36e-5684-4dad-b51a-34d0c5edfec5",
+    "id": "74fba3f2-e2e1-41a9-be35-6a148db1b1aa",
     "order_id": "a9a13582-fc20-4ea6-a347-06f569fd6de9",
     "status": "DELIVERY_FAILED",
     "color_code": "#10B981",
@@ -830,7 +830,7 @@ async function main() {
     "genStatus": "DELIVERY_FAILED"
   },
   {
-    "id": "e3263f37-e8a9-40d9-af37-634c02479191",
+    "id": "6e1e86db-57d2-465b-97c6-8709f494aeef",
     "order_id": "c6b356df-f712-45f3-be0e-b02412853a02",
     "status": "DELIVERY_FAILED",
     "color_code": "#3B82F6",
@@ -855,7 +855,7 @@ async function main() {
     "genStatus": "DELIVERY_FAILED"
   },
   {
-    "id": "793d8488-8812-465e-829a-e33f58a5f27b",
+    "id": "9968cc15-6964-4150-a6af-335783138a85",
     "order_id": "cba684b5-f1c1-4ba2-b897-1f07d18c2363",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#10B981",
@@ -880,7 +880,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "ce062b7b-a259-4fb1-b0c0-79c7e92c9f89",
+    "id": "785fe1c3-57c9-427c-b069-86177be56231",
     "order_id": "d8f4b38a-168d-46c4-833a-7675cacb29f5",
     "status": "CANCELLED_SUCCESSFULLY",
     "color_code": "#3B82F6",
@@ -905,7 +905,7 @@ async function main() {
     "genStatus": "CANCELLED_SUCCESSFULLY"
   },
   {
-    "id": "d9629637-39ef-46a1-b20f-4a2a56ef30e5",
+    "id": "a41b1e51-a4ab-4128-8e33-b00b4f608ceb",
     "order_id": "d941f369-7184-47e1-9b54-ee7dbb709aca",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#10B981",
@@ -930,7 +930,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "f49d3d45-1f62-400a-b9b0-e346ac539bec",
+    "id": "8c6ced11-4698-48cb-b4fd-52557d50fc22",
     "order_id": "da7bdb96-8105-4814-ac79-c6cb3ce4eda6",
     "status": "DELIVERED",
     "color_code": "#3B82F6",
@@ -955,7 +955,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "c3b95309-bf5b-4012-9fe4-e1a64beea607",
+    "id": "ecff43ac-59d2-4e12-9843-8ca1d2969425",
     "order_id": "da8c4eb5-91a8-4365-ab79-dbcd331cf067",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -980,7 +980,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "f257f4fc-b1fe-4bfc-bc4c-9a35094b9512",
+    "id": "fc72ffaa-f325-472f-a9f9-09bfbfbb0cc5",
     "order_id": "daebefcf-6414-49ca-9907-058c1dfb8fce",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#3B82F6",
@@ -1005,7 +1005,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "261514da-03ad-40e3-8bf9-e1bd36b23ab8",
+    "id": "f126dea2-d38c-4c0d-a027-4381f8dd256e",
     "order_id": "dcc42ba7-501d-4600-bab4-5e030d7da2b2",
     "status": "OUT_FOR_DELIVERY",
     "color_code": "#10B981",
@@ -1030,7 +1030,7 @@ async function main() {
     "genStatus": "OUT_FOR_DELIVERY"
   },
   {
-    "id": "86c73318-2e0f-497b-8363-2007e260bbda",
+    "id": "c0d049ca-12c0-47da-b776-bdaaf9aa311f",
     "order_id": "e03edb3f-ff16-4c89-9fb0-7eff3998813b",
     "status": "ACCEPTED_FOR_ASSIGNMENT",
     "color_code": "#3B82F6",
@@ -1055,7 +1055,7 @@ async function main() {
     "genStatus": "ACCEPTED_FOR_ASSIGNMENT"
   },
   {
-    "id": "c41d0ddf-a3b3-46b2-b2b7-631d3c165828",
+    "id": "d4f3b0f9-be94-4f68-9833-0256caa9e7bb",
     "order_id": "e7cb61bc-bbd4-401c-88bd-8683ef995087",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -1080,7 +1080,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "8bd43487-666f-48c9-be94-595aae4678ed",
+    "id": "878cd663-7143-42fe-93db-167506634ba3",
     "order_id": "f0170e83-be7d-4d91-ac8f-653513acc459",
     "status": "COURIER_ASSIGNED",
     "color_code": "#3B82F6",
@@ -1105,7 +1105,7 @@ async function main() {
     "genStatus": "COURIER_ASSIGNED"
   },
   {
-    "id": "707c4eab-7b14-4c57-ac73-a8ad8a80a281",
+    "id": "ea6a16a9-d2ba-4656-a701-1729e6272095",
     "order_id": "f3d24dce-ed93-44be-a70e-f82ddbc84b05",
     "status": "DELIVERED",
     "color_code": "#10B981",
@@ -1130,7 +1130,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "63e4ef2b-ff43-4eb6-9521-22accf8fd271",
+    "id": "69c7418a-1966-41ef-b037-4e2af1176fac",
     "order_id": "f479cb1d-1e2a-46a7-a133-72863ad17a8d",
     "status": "DELIVERED",
     "color_code": "#3B82F6",
@@ -1155,7 +1155,7 @@ async function main() {
     "genStatus": "DELIVERED"
   },
   {
-    "id": "61c18869-8a95-4b0d-bae7-bc2fc763549a",
+    "id": "7505969e-ba07-4ecf-954b-80469a8cb763",
     "order_id": "f488f426-3591-431a-af07-ae35d62dd2e2",
     "status": "PICKED_UP",
     "color_code": "#10B981",
@@ -1180,7 +1180,7 @@ async function main() {
     "genStatus": "PICKED_UP"
   },
   {
-    "id": "95d2b014-588d-4ea0-9456-6f22fc07e55e",
+    "id": "dc3185c3-f9f9-4a47-9437-6f23637a2495",
     "order_id": "f7193ac4-fcf5-4d5b-b89f-b38e6db0b449",
     "status": "OUT_FOR_DELIVERY",
     "color_code": "#3B82F6",
@@ -1205,7 +1205,7 @@ async function main() {
     "genStatus": "OUT_FOR_DELIVERY"
   },
   {
-    "id": "02a1a9f5-f6fa-450f-a220-1e9a5629869b",
+    "id": "1fa6edde-090c-4c40-a6c4-54b0649ddcc3",
     "order_id": "faa626df-32ce-43ac-8976-642dbaf75019",
     "status": "DELIVERED",
     "color_code": "#10B981",

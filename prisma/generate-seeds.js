@@ -239,6 +239,8 @@ function main() {
   // 2. GENERATE SELLER SQL SEED
   console.log('Generating Seller seed SQL...');
   let sellerSql = '-- SEED PARA BASE DE DATOS SELLER\n';
+  sellerSql += 'TRUNCATE TABLE package_items CASCADE;\n';
+  sellerSql += 'TRUNCATE TABLE packages CASCADE;\n';
   sellerSql += 'TRUNCATE TABLE products CASCADE;\n';
   sellerSql += 'TRUNCATE TABLE stores CASCADE;\n\n';
 
@@ -251,6 +253,43 @@ function main() {
   for (const store of sellers) {
     for (const prod of store.products) {
       sellerSql += `INSERT INTO products (id, store_id, name, price, stock, description, image_url) VALUES ('${prod.id}', '${store.id}', '${escapeSqlString(prod.name)}', ${prod.price}, ${prod.stock}, '${escapeSqlString(prod.description)}', '${prod.image_url}') ON CONFLICT (id) DO NOTHING;\n`;
+    }
+  }
+
+  sellerSql += '\n-- INSERTING PACKAGES & ITEMS\n';
+  for (const o of orders) {
+    const packageId = generateUUID();
+    
+    let sellerPackageStatus = 'PREPARING';
+    switch (o.buyerOrderStatus) {
+      case 'PAYMENT_PENDING':
+        sellerPackageStatus = 'PENDING_PAYMENT';
+        break;
+      case 'PREPARING':
+        sellerPackageStatus = 'PREPARING';
+        break;
+      case 'COURIER_ASSIGNED':
+        sellerPackageStatus = 'READY_TO_PICKUP';
+        break;
+      case 'PICKED_UP':
+      case 'OUT_FOR_DELIVERY':
+        sellerPackageStatus = 'IN_TRANSIT';
+        break;
+      case 'DELIVERED':
+        sellerPackageStatus = 'DELIVERED';
+        break;
+      case 'CANCELLED':
+        sellerPackageStatus = 'CANCELLED';
+        break;
+      case 'DELIVERY_FAILED':
+        sellerPackageStatus = 'PREPARING';
+        break;
+    }
+    
+    sellerSql += `INSERT INTO packages (id, payment_order_id, store_id, buyer_id, buyer_address, shipping_cost, delivery_trip_id, status, buyer_name, buyer_phone) VALUES ('${packageId}', '${o.orderId}', '${o.store.id}', '${o.buyer.client_id}', '${escapeSqlString(o.buyerAddress.street)}', ${o.deliveryCost}, NULL, '${sellerPackageStatus}', '${escapeSqlString(o.buyer.name)}', '${o.buyer.phone || ''}');\n`;
+    
+    for (const item of o.items) {
+      sellerSql += `INSERT INTO package_items (package_id, product_id, product_name, quantity, price_at_purchase) VALUES ('${packageId}', '${item.product_id}', '${escapeSqlString(item.name)}', ${item.quantity}, ${item.unit_price});\n`;
     }
   }
   fs.writeFileSync(path.join(outputDir, 'seller', 'seed.sql'), sellerSql, 'utf8');
