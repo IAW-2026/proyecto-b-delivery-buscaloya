@@ -10,6 +10,17 @@ function generateUUID() {
   });
 }
 
+// Helper to compute a deterministic hash from a string
+function hashCode(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const character = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + character;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 // Bounding box for Bahía Blanca coordinates mapping to [1000, 9000]
 function mapLngToX(lng) {
   const minLng = -62.276;
@@ -33,12 +44,12 @@ function escapeSqlString(str) {
 function main() {
   const buyerDataDir = path.join(__dirname, 'buyer-data');
   const sellerDataDir = path.join(__dirname, 'seller-data');
-  const paymentDataDir = path.join(__dirname, 'payment-data');
   
   // Read baseline files
   const users = JSON.parse(fs.readFileSync(path.join(buyerDataDir, 'users.json'), 'utf8'));
   const addresses = JSON.parse(fs.readFileSync(path.join(buyerDataDir, 'addresses.json'), 'utf8'));
   const sellers = JSON.parse(fs.readFileSync(path.join(sellerDataDir, 'sellers.json'), 'utf8'));
+  const ordersSource = JSON.parse(fs.readFileSync(path.join(buyerDataDir, 'orders.json'), 'utf8'));
 
   // Ensure output directory structure exists
   const outputDir = path.join(__dirname, 'seeds-ecosistema');
@@ -47,110 +58,124 @@ function main() {
   fs.mkdirSync(path.join(outputDir, 'payments'), { recursive: true });
   fs.mkdirSync(path.join(outputDir, 'delivery'), { recursive: true });
 
-  console.log('Generating seed datasets...');
+  console.log(`Processing ${ordersSource.length} source orders from orders.json...`);
 
-  // Generate ~40 consistent orders
+  // Map stores by normalized name
+  const storeMap = {
+    "Pizzería Roma": "store_pizzeria_roma",
+    "TecnoSur": "store_tecnologia_sur",
+    "Farmacia del Centro": "store_farmacia_centro",
+    "Librería Estudiantil": "store_libreria_estudiantil",
+    "Super Todo": "store_supermercado_todo"
+  };
+
   const orders = [];
-  const statusOptions = ['payment_pending', 'paid_preparing', 'paid_assigned', 'paid_picked_up', 'paid_out', 'closed', 'cancelled', 'failed'];
   
-  for (let i = 0; i < 45; i++) {
-    const orderId = generateUUID();
-    const purchaseId = generateUUID();
+  for (const srcOrder of ordersSource) {
+    const orderId = srcOrder.order_id;
+    const purchaseId = srcOrder.purchase_id;
+    const storeName = srcOrder.store_name;
+    const buyerStatusInput = srcOrder.status; // e.g. COURIER_ASSIGNED, DELIVERED, etc.
+    const deliveryCode = srcOrder.delivery_code;
+    const createdAt = new Date(srcOrder.created_at);
+    const updatedAt = new Date(createdAt.getTime() + 1800 * 1000); // +30 minutes
     
-    // Pick random buyer and store
-    const buyer = users[Math.floor(Math.random() * users.length)];
+    // Deterministic hash based on order_id to select buyer and items
+    const orderHash = Math.abs(hashCode(orderId));
+    
+    // Pick deterministic buyer
+    const buyer = users[orderHash % users.length];
     const buyerAddressList = addresses.filter(a => a.client_id === buyer.client_id);
     const buyerAddress = buyerAddressList.length > 0 
-      ? buyerAddressList[Math.floor(Math.random() * buyerAddressList.length)] 
-      : { address_id: generateUUID(), title: 'Casa', street: 'Alsina 120', city: 'Bahía Blanca', lat: -38.7180, lng: -62.2660 };
+      ? buyerAddressList[orderHash % buyerAddressList.length] 
+      : { address_id: 'default_addr', title: 'Casa', street: 'Alsina 120', city: 'Bahía Blanca', lat: -38.7180, lng: -62.2660 };
 
-    const store = sellers[Math.floor(Math.random() * sellers.length)];
+    // Match store
+    const storeId = storeMap[storeName] || "store_pizzeria_roma";
+    const store = sellers.find(s => s.id === storeId) || sellers[0];
     
-    // Pick 1-3 random products from the store
-    const numProducts = Math.floor(Math.random() * 3) + 1;
+    // Pick 1-3 deterministic products from the store
+    const numProducts = (orderHash % 3) + 1;
     const selectedProducts = [];
     const availableProducts = [...store.products];
     for (let p = 0; p < numProducts && availableProducts.length > 0; p++) {
-      const idx = Math.floor(Math.random() * availableProducts.length);
+      const idx = (orderHash + p) % availableProducts.length;
       selectedProducts.push(availableProducts.splice(idx, 1)[0]);
     }
 
-    const items = selectedProducts.map(p => ({
+    const items = selectedProducts.map((p, pIdx) => ({
       product_id: p.id,
       name: p.name,
-      quantity: Math.floor(Math.random() * 2) + 1,
+      quantity: ((orderHash + pIdx) % 2) + 1,
       unit_price: p.price,
       seller_id: store.id
     }));
 
     const totalAmount = items.reduce((acc, curr) => acc + (curr.unit_price * curr.quantity), 0);
-    const deliveryCost = Math.round(350 + Math.random() * 450);
-    
-    // Pick status with realistic distribution
-    let statusIndex = 0;
-    if (i < 5) statusIndex = 0; // payment_pending
-    else if (i < 10) statusIndex = 1; // paid_preparing
-    else if (i < 15) statusIndex = 2; // paid_assigned
-    else if (i < 20) statusIndex = 3; // paid_picked_up
-    else if (i < 25) statusIndex = 4; // paid_out
-    else if (i < 38) statusIndex = 5; // closed (delivered)
-    else if (i < 42) statusIndex = 6; // cancelled
-    else statusIndex = 7; // failed
+    const deliveryCost = 350 + (orderHash % 451); // between 350 and 800
 
-    const genStatus = statusOptions[statusIndex];
-
-    // Status mapping table
+    // Set precise mappings for statuses
     let paymentsStatus = 'paid';
-    let buyerOrderStatus = 'PREPARING';
+    let buyerOrderStatus = buyerStatusInput;
     let buyerPurchaseStatus = 'PAID';
     let deliveryStatus = 'ACCEPTED_FOR_ASSIGNMENT';
 
-    if (genStatus === 'payment_pending') {
-      paymentsStatus = 'payment_pending';
-      buyerOrderStatus = 'PAYMENT_PENDING';
-      buyerPurchaseStatus = 'PENDING';
-      deliveryStatus = 'ACCEPTED_FOR_ASSIGNMENT';
-    } else if (genStatus === 'paid_preparing') {
-      paymentsStatus = 'paid';
-      buyerOrderStatus = 'PREPARING';
-      buyerPurchaseStatus = 'PAID';
-      deliveryStatus = 'ACCEPTED_FOR_ASSIGNMENT';
-    } else if (genStatus === 'paid_assigned') {
-      paymentsStatus = 'paid';
-      buyerOrderStatus = 'COURIER_ASSIGNED';
-      buyerPurchaseStatus = 'PAID';
-      deliveryStatus = 'COURIER_ASSIGNED';
-    } else if (genStatus === 'paid_picked_up') {
-      paymentsStatus = 'paid';
-      buyerOrderStatus = 'PICKED_UP';
-      buyerPurchaseStatus = 'PAID';
-      deliveryStatus = 'PICKED_UP';
-    } else if (genStatus === 'paid_out') {
-      paymentsStatus = 'paid';
-      buyerOrderStatus = 'OUT_FOR_DELIVERY';
-      buyerPurchaseStatus = 'PAID';
-      deliveryStatus = 'OUT_FOR_DELIVERY';
-    } else if (genStatus === 'closed') {
-      paymentsStatus = 'closed';
-      buyerOrderStatus = 'DELIVERED';
-      buyerPurchaseStatus = 'COMPLETED';
-      deliveryStatus = 'DELIVERED';
-    } else if (genStatus === 'cancelled') {
-      paymentsStatus = 'cancelled';
-      buyerOrderStatus = 'CANCELLED';
-      buyerPurchaseStatus = 'CANCELLED';
-      deliveryStatus = 'CANCELLED_SUCCESSFULLY';
-    } else if (genStatus === 'failed') {
-      paymentsStatus = 'failed';
-      buyerOrderStatus = 'DELIVERY_FAILED';
-      buyerPurchaseStatus = 'PAID';
-      deliveryStatus = 'DELIVERY_FAILED';
+    switch (buyerStatusInput) {
+      case 'PAYMENT_PENDING':
+        paymentsStatus = 'payment_pending';
+        buyerOrderStatus = 'PAYMENT_PENDING';
+        buyerPurchaseStatus = 'PENDING';
+        deliveryStatus = 'ACCEPTED_FOR_ASSIGNMENT';
+        break;
+      case 'PREPARING':
+        paymentsStatus = 'paid';
+        buyerOrderStatus = 'PREPARING';
+        buyerPurchaseStatus = 'PAID';
+        deliveryStatus = 'ACCEPTED_FOR_ASSIGNMENT';
+        break;
+      case 'COURIER_ASSIGNED':
+        paymentsStatus = 'paid';
+        buyerOrderStatus = 'COURIER_ASSIGNED';
+        buyerPurchaseStatus = 'PAID';
+        deliveryStatus = 'COURIER_ASSIGNED';
+        break;
+      case 'PICKED_UP':
+        paymentsStatus = 'paid';
+        buyerOrderStatus = 'PICKED_UP';
+        buyerPurchaseStatus = 'PAID';
+        deliveryStatus = 'PICKED_UP';
+        break;
+      case 'OUT_FOR_DELIVERY':
+        paymentsStatus = 'paid';
+        buyerOrderStatus = 'OUT_FOR_DELIVERY';
+        buyerPurchaseStatus = 'PAID';
+        deliveryStatus = 'OUT_FOR_DELIVERY';
+        break;
+      case 'DELIVERED':
+        paymentsStatus = 'closed';
+        buyerOrderStatus = 'DELIVERED';
+        buyerPurchaseStatus = 'COMPLETED';
+        deliveryStatus = 'DELIVERED';
+        break;
+      case 'CANCELLED':
+        paymentsStatus = 'cancelled';
+        buyerOrderStatus = 'CANCELLED';
+        buyerPurchaseStatus = 'CANCELLED';
+        deliveryStatus = 'CANCELLED_SUCCESSFULLY';
+        break;
+      case 'DELIVERY_FAILED':
+        paymentsStatus = 'failed';
+        buyerOrderStatus = 'DELIVERY_FAILED';
+        buyerPurchaseStatus = 'PAID';
+        deliveryStatus = 'DELIVERY_FAILED';
+        break;
+      default:
+        // fallback
+        paymentsStatus = 'paid';
+        buyerOrderStatus = 'PREPARING';
+        buyerPurchaseStatus = 'PAID';
+        deliveryStatus = 'ACCEPTED_FOR_ASSIGNMENT';
     }
-
-    const createdOffset = Math.floor(Math.random() * 5) * 86400 * 1000; // up to 5 days ago
-    const createdAt = new Date(Date.now() - createdOffset);
-    const updatedAt = new Date(createdAt.getTime() + 1800 * 1000); // 30 mins later
-    const deliveryCode = Math.floor(1000 + Math.random() * 9000);
 
     orders.push({
       orderId,
@@ -206,7 +231,7 @@ function main() {
   // Seed User Logs
   buyerSql += '\n-- INSERTING USER LOGS\n';
   const logs = JSON.parse(fs.readFileSync(path.join(buyerDataDir, 'user_logs.json'), 'utf8'));
-  for (const log of logs.slice(0, 150)) { // limit logs to first 150 for reasonable seed size
+  for (const log of logs.slice(0, 150)) {
     buyerSql += `INSERT INTO user_logs (client_id, login_time) VALUES ('${log.client_id}', '${log.login_time}');\n`;
   }
   fs.writeFileSync(path.join(outputDir, 'buyer', 'seed.sql'), buyerSql, 'utf8');
@@ -260,11 +285,7 @@ function main() {
   // 4. GENERATE DELIVERY TS SEED (Prisma)
   console.log('Generating Delivery Prisma seed.ts...');
   
-  // Format consistent deliveries as JS objects for inlining in seed.ts
   const deliveryData = [];
-  const courierAssignments = [];
-  const statusEvents = [];
-  const trackingPoints = [];
 
   // Couriers list mapping (c1 to c6)
   const couriersInfo = [
@@ -363,7 +384,6 @@ function main() {
   tsCode += `  const deliveryClerkId = await getClerkUserIdByEmail('delivery+clerk_test@iaw.com');\n`;
   tsCode += `  const adminClerkId = await getClerkUserIdByEmail('admin+clerk_test@iaw.com');\n\n`;
 
-  // Create couriers JS code
   tsCode += `  const couriersData = ${JSON.stringify(couriersInfo, null, 2)};\n`;
   tsCode += `  const couriers = [];\n`;
   tsCode += `  for (const c of couriersData) {\n`;
@@ -383,8 +403,6 @@ function main() {
   tsCode += `  }\n\n`;
 
   tsCode += `  console.log('📦 CREANDO ENTREGAS Y HISTORIALES COHERENTES...');\n`;
-  
-  // Create deliveries JS code inline
   tsCode += `  const deliveries = ${JSON.stringify(deliveryData, null, 2)};\n`;
   tsCode += `  for (const d of deliveries) {\n`;
   tsCode += `    const dbDelivery = await prisma.delivery.create({\n`;
@@ -415,8 +433,6 @@ function main() {
   tsCode += `      }\n`;
   tsCode += `    });\n\n`;
 
-  // Status-based creation of assignments and events inside the loop
-  tsCode += `    // Inserción de eventos históricos correspondientes\n`;
   tsCode += `    const events = [];\n`;
   tsCode += `    events.push({\n`;
   tsCode += `      delivery_id: dbDelivery.id,\n`;
@@ -458,7 +474,6 @@ function main() {
   tsCode += `        source: EventSource.DELIVERY,\n`;
   tsCode += `        reason: 'Dron despegó, rumbo trazado a destino.'\n`;
   tsCode += `      });\n`;
-  tsCode += `      // Generar algunos puntos de tracking\n`;
   tsCode += `      await prisma.deliveryTrackingPoint.createMany({\n`;
   tsCode += `        data: [\n`;
   tsCode += `          { delivery_id: dbDelivery.id, lat: -38.7180, lon: -62.2660, source: TrackingSource.SYSTEM },\n`;
@@ -493,7 +508,6 @@ function main() {
   tsCode += `    await prisma.deliveryStatusEvent.createMany({ data: events });\n`;
   tsCode += `  }\n\n`;
 
-  // Traveler logs DML
   tsCode += `  console.log('🖥 INICIALIZANDO BITÁCORAS TRAVELERLOG...');\n`;
   tsCode += `  await prisma.travelerLog.createMany({\n`;
   tsCode += `    data: ${JSON.stringify(travelerLogs, null, 2)}.map(log => ({\n`;
@@ -517,11 +531,9 @@ function main() {
   tsCode += `  });\n`;
 
   fs.writeFileSync(path.join(outputDir, 'delivery', 'seed.ts'), tsCode, 'utf8');
-  
-  // Also replace the official seed.ts in prisma
   fs.writeFileSync(path.join(__dirname, 'seed.ts'), tsCode, 'utf8');
 
-  console.log('All seed scripts generated successfully in folder "seeds-ecosistema" and delivery seed updated!');
+  console.log('All seed scripts generated successfully based on orders.json!');
 }
 
 main();
