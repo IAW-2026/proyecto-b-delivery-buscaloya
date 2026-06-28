@@ -393,7 +393,7 @@ function main() {
   tsCode += `        name: c.name,\n`;
   tsCode += `        phone: c.phone,\n`;
   tsCode += `        vehicle_type: c.vehicle,\n`;
-  tsCode += `        status: AvailabilityStatus[c.status],\n`;
+  tsCode += `        status: AvailabilityStatus[c.status as keyof typeof AvailabilityStatus],\n`;
   tsCode += `        last_x: c.last_x,\n`;
   tsCode += `        last_y: c.last_y,\n`;
   tsCode += `        clerk_id: clerk_id || null\n`;
@@ -409,7 +409,7 @@ function main() {
   tsCode += `      data: {\n`;
   tsCode += `        id: d.id,\n`;
   tsCode += `        order_id: d.order_id,\n`;
-  tsCode += `        status: DeliveryStatus[d.genStatus],\n`;
+  tsCode += `        status: DeliveryStatus[d.genStatus as keyof typeof DeliveryStatus],\n`;
   tsCode += `        color_code: d.color_code,\n`;
   tsCode += `        confirmation_code: d.confirmation_code,\n`;
   tsCode += `        created_at: new Date(d.created_at),\n`;
@@ -530,7 +530,7 @@ function main() {
   tsCode += `    await prisma.$disconnect();\n`;
   tsCode += `  });\n`;
 
-  fs.writeFileSync(path.join(outputDir, 'delivery', 'seed.ts'), tsCode, 'utf8');
+  fs.writeFileSync(path.join(outputDir, 'delivery', 'seed.ts'), tsCode.replace(`../lib/prisma`, `../../../lib/prisma`), 'utf8');
   fs.writeFileSync(path.join(__dirname, 'seed.ts'), tsCode, 'utf8');
 
   console.log('All seed scripts generated successfully based on orders.json!');
